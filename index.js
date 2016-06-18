@@ -94,6 +94,62 @@ function getValue(conn, sql, args){
 }
 exports.getValue = getValue;
 
+function insert(conn, sql, args){
+    if( args == null ) args = [];
+    return new Promise(function(resolve, reject){
+        conn.query(sql, args, function(err, result){
+            if( err ){
+                reject(err);
+                return;
+            }
+            resolve(result.insertId);
+        })
+    })
+}
+exports.insert = insert;
+
+function exec(conn, sql, args){
+    if( args == null ) args = [];
+    return new Promise(function(resolve, reject){
+        conn.query(sql, args, function(err, result){
+            if( err ){
+                reject(err);
+                return;
+            }
+            resolve(result.affectedRows);
+        })
+    })
+}
+exports.exec = exec;
+
+function withTransaction(conn, fn){
+    return new Promise(function(resolve, reject){
+        conn.beginTransaction(function(err){
+            if( err ){
+                reject(err);
+                return;
+            }
+            console.log("start transaction");
+            fn().then(function(value){
+                conn.commit(function(err){
+                    if( err ){
+                        reject(err);
+                        return;
+                    }
+                    console.log("commit");
+                    resolve(value);
+                });
+            }, function(err){
+                conn.rollback(function(){
+                    console.log("rollback");
+                    reject(err);
+                })
+            });
+        });
+    });
+}
+exports.withTransaction = withTransaction;
+
 function recentVisits(conn){
     return query(conn, "select p.patient_id, p.last_name, p.first_name, p.last_name_yomi, p.first_name_yomi, " + 
         " v.visit_id " + 
@@ -394,3 +450,149 @@ function listAllFullDiseases(conn, patientId){
         });
 }
 exports.listAllFullDiseases = listAllFullDiseases;
+
+function listAvailableShahokokuho(conn, patientId, at){
+    var sql;
+    sql = "select * from hoken_shahokokuho where patient_id = ? " +
+        " and valid_from <= date(?) " +
+        " and (valid_upto = '0000-00-00' or valid_upto >= date(?)) " +
+        " order by shahokokuho_id ";
+    return query(conn, sql, [patientId, at, at]);
+}
+
+function listAllShahokokuho(conn, patientId){
+    var sql = "select * from hoken_shahokokuho where patient_id = ? order by shahokokuho_id";
+    return query(conn, sql, [patientId]);
+}
+
+function listAvailableKoukikourei(conn, patientId, at){
+    var sql;
+    sql = "select * from hoken_koukikourei where patient_id = ? " +
+        " and valid_from <= date(?) " +
+        " and (valid_upto = '0000-00-00' or valid_upto >= date(?)) " +
+        " order by koukikourei_id ";
+    return query(conn, sql, [patientId, at, at]);
+}
+
+function listAllKoukikourei(conn, patientId){
+    var sql = "select * from hoken_koukikourei where patient_id = ? order by koukikourei_id";
+    return query(conn, sql, [patientId]);
+}
+
+function listAllRoujin(conn, patientId){
+    var sql = "select * from hoken_roujin where patient_id = ? order by roujin_id";
+    return query(conn, sql, [patientId]);
+}
+
+function listAvailableKouhi(conn, patientId, at){
+    var sql;
+    sql = "select * from kouhi where patient_id = ? " +
+        " and valid_from <= date(?) " +
+        " and (valid_upto = '0000-00-00' or valid_upto >= date(?)) " +
+        " order by kouhi_id ";
+    return query(conn, sql, [patientId, at, at]);
+}
+
+function listAllKouhi(conn, patientId){
+    var sql = "select * from kouhi where patient_id = ? order by kouhi_id";
+    return query(conn, sql, [patientId]);
+}
+
+function listAvailableHoken(conn, patientId, at){
+    var obj = {};
+    return listAvailableShahokokuho(conn, patientId, at)
+        .then(function(list){
+            obj.shahokokuho_list = list;
+            return listAvailableKoukikourei(conn, patientId, at);
+        })
+        .then(function(list){
+            obj.koukikourei_list = list;
+            return listAvailableKouhi(conn, patientId, at);
+        })
+        .then(function(list){
+            obj.kouhi_list = list;
+            return obj;
+        });
+}
+exports.listAvailableHoken = listAvailableHoken;
+
+function listAllHoken(conn, patientId){
+    var obj = {};
+    return listAllShahokokuho(conn, patientId)
+        .then(function(list){
+            obj.shahokokuho_list = list;
+            return listAllKoukikourei(conn, patientId);
+        })
+        .then(function(list){
+            obj.koukikourei_list = list;
+            return listAllRoujin(conn, patientId);
+        })
+        .then(function(list){
+            obj.roujin_list = list;
+            return listAllKouhi(conn, patientId);
+        })
+        .then(function(list){
+            obj.kouhi_list = list;
+            return obj;
+        });
+}
+exports.listAllHoken = listAllHoken;
+
+function enterText(conn, visitId, content){
+    var sql;
+    sql = "insert into visit_text set visit_id = ?, content = ?";
+    return insert(conn, sql, [visitId, content]);
+}
+exports.enterText = enterText;
+
+function getText(conn, textId){
+    var sql;
+    sql = "select * from visit_text where text_id = ?";
+    return get(conn, sql, [textId]);
+}
+exports.getText = getText;
+
+function updateText(conn, textId, content){
+    var sql;
+    sql = "update visit_text set content = ? where text_id = ?";
+    return exec(conn, sql, [content, textId])
+    .then(function(affected){
+    	if( affected !== 1 ){
+    		throw new Error("update text failed");
+    	}
+    	return true;
+    })
+}
+exports.updateText = updateText;
+
+function deleteText(conn, textId){
+    var sql;
+    sql = "delete from visit_text where text_id = ?";
+    return exec(conn, sql, [textId])
+    .then(function(affected){
+    	if( affected !== 1 ){
+    		throw new Error("delete text failed");
+    	}
+    	return true;
+    })
+}
+exports.deleteText = deleteText;
+
+function updateVisitHoken(conn, visitId, shahokokuhoId, koukikoureiId, kouhi1Id, kouhi2Id, kouhi3Id){
+    var sql;
+    sql = "update visit set shahokokuho_id = ?, koukikourei_id = ?, kouhi_1_id = ?, " +
+        " kouhi_2_id = ?, kouhi_3_id = ? where visit_id = ?";
+    return exec(conn, sql, [shahokokuhoId, koukikoureiId, kouhi1Id, kouhi2Id, kouhi3Id, visitId])
+    .then(function(affected){
+    	if( affected !== 1 ){
+    		throw new Error("update visit hoken failed");
+    	}
+    	return true;
+    })
+}
+exports.updateVisitHoken = updateVisitHoken;
+
+
+
+
+

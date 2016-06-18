@@ -20,7 +20,17 @@ dbPool.getConnection(function(conn){
 	//db.listFullVisits(conn, 198, 0, 10)
 	//db.getFullVisit(conn, 46765)
 	//db.listCurrentFullDiseases(conn, 199)
-	db.listAllFullDiseases(conn, 199)
+	//db.listAllFullDiseases(conn, 199)
+	//db.listAvailableHoken(conn, 2274, "2015-02-03")
+	//db.listAllHoken(conn, 2274)
+	//db.enterText(conn, 46765, "hello, world")
+	//db.getText(conn, 79240)
+	//db.updateText(conn, 79240, "hello, again")
+	// db.withTransaction(conn, function(){
+	// 	return db.deleteText(conn, 79240)
+	// })
+	db.getVisit(conn, 46766)
+	//db.updateVisitHoken(conn, 46766, 6052, 0, 0, 0, 0)
 	.then(function(result){
 		console.log(JSON.stringify(result, null, 2));
 		conn.release();

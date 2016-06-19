@@ -177,5 +177,27 @@ describe("Testing basic functionalisty", function(){
 			done();
 		})
 		.catch(done);
-	})
+	});
+	it("test getValue", function(done){
+		var data = {
+			message: "hello",
+			sender: "practice",
+			recipient: "pharmacy",
+			m_datetime: "2016-06-19 15:21:00"			
+		};
+		db.insert(conn, "insert into hotline set message = ?, sender = ?, " +
+			"recipient = ?, m_datetime = ?",
+			[data.message, data.sender, data.recipient, data.m_datetime])
+		.then(function(insertId){
+			expect(insertId).to.above(0);
+			data.hotline_id = insertId;
+			return db.getValue(conn, "select count(*) from hotline where hotline_id = ?",
+				[insertId]);
+		})
+		.then(function(result){
+			expect(result).to.equal(1);
+			done();
+		})
+		.catch(done);
+	});
 });

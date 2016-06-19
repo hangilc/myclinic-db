@@ -75,3 +75,18 @@ function doDelete(conn, sql, args){
     })
 }
 exports.delete = doDelete;
+
+function getValue(conn, sql, args){
+    return exec(conn, sql, args)
+    .then(function(result){
+        if( result.length === 1 ){
+            var row = result[0];
+            for(var key in row){
+                return row[key];
+            }
+        } else {
+            throw new Error("getValue failed");
+        }
+    })
+}
+exports.getValue = getValue;

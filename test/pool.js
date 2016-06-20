@@ -8,7 +8,7 @@ var config = {
     dateStrings: true
 };
 
-var dbPool = new db.Pool(config);
+var dbPool = db.createPool(config);
 
 exports.getPool = function(){
 	return dbPool;

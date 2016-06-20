@@ -13,12 +13,17 @@ Pool.prototype.getConnection = function(cb){
 	});
 };
 
-Pool.prototype.dispose = function(){
+Pool.prototype.dispose = function(cb){
 	this.pool.end(function(err){
 		if( err ){
 			throw err;
 		}
+		if( cb ){
+			cb();
+		}
 	});
 }
 
-module.exports = Pool;
+exports.createPool = function(config){
+	return new Pool(config);
+}

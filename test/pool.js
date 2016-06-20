@@ -7,10 +7,10 @@ exports.getPool = function(){
 	return dbPool;
 };
 
-exports.withConnection = function(cb){
-	dbPool.withConnection(cb);
-};
+// exports.withConnection = function(cb){
+// 	dbPool.withConnection(cb);
+// };
 
-exports.cleanUp = function(){
-	dbPool.dispose();
-};
+// exports.cleanUp = function(){
+// 	dbPool.dispose();
+// };

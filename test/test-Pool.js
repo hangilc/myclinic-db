@@ -7,6 +7,11 @@ var pool;
 before(function(done){
 	pool = db.createPool(config);
 	done();
+});
+
+after(function(done){
+	pool.dispose();
+	done();
 })
 
 describe("Testing Pool", function(){

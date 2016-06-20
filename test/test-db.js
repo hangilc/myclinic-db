@@ -1,14 +1,14 @@
-var dbPool = require("./pool.js").getPool();
+//var dbPool = require("./pool.js").getPool();
 var db = require("../index");
 var expect = require("chai").expect;
+var setup = require("./setup");
 
-var conn;
 
 function clearHotline(done){
-	dbPool.getConnection(function(c){
+	setup.openConnection(function(c){
 		db.exec(c, "delete from hotline")
 		.then(function(){
-			c.release();
+			setup.closeConnection(c);
 			done();
 		})
 	})
@@ -17,19 +17,20 @@ function clearHotline(done){
 before(clearHotline);
 after(clearHotline);
 
-beforeEach(function(done){
-	dbPool.getConnection(function(conn_){
-		conn = conn_;
+describe("Testing basic functionalisty (getConnection)", function(){
+	var conn;
+	beforeEach(function(done){
+		setup.openConnection(function(conn_){
+			conn = conn_;
+			done();
+		});
+	});
+
+	afterEach(function(done){
+		setup.closeConnection(conn);
 		done();
 	});
-});
 
-afterEach(function(done){
-	conn.release();
-	done();
-});
-
-describe("Testing basic functionalisty", function(){
 	it("test find", function(done){
 		db.find(conn, "select * from hotline where hotline_id = 0")
 		.then(function(result){

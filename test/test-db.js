@@ -45,6 +45,10 @@ function getHotline(conn, hotline_id){
 	return db.get(conn, "select * from hotline where hotline_id = ?", [hotline_id]);
 }
 
+function findHotline(conn, hotline_id){
+	return db.find(conn, "select * from hotline where hotline_id = ?", [hotline_id]);
+}
+
 describe("Testing basic functionalisty (getConnection)", function(){
 	var conn;
 	beforeEach(function(done){
@@ -82,7 +86,7 @@ describe("Testing basic functionalisty (getConnection)", function(){
 		var data = makeData("hello");
 		insertHotline(conn, data)
 		.then(function(){
-			return db.find(conn, "select * from hotline where hotline_id = ?", [data.hotline_id])
+			return findHotline(conn, data.hotline_id)
 		})
 		.then(function(row){
 			expect(row).to.eql(data);
@@ -90,54 +94,26 @@ describe("Testing basic functionalisty (getConnection)", function(){
 		.then(done, done);
 	});
 	it("test insert and query", function(done){
-		var data1 = {
-			message: "hello data1",
-			sender: "practice",
-			recipient: "pharmacy",
-			m_datetime: "2016-06-19 15:21:00"			
-		};
-		var data2 = {
-			message: "hello data2",
-			sender: "practice",
-			recipient: "cashier",
-			m_datetime: "2016-06-19 15:26:00"			
-		};
-		db.insert(conn, "insert into hotline set message = ?, sender = ?, " +
-			"recipient = ?, m_datetime = ?",
-			[data1.message, data1.sender, data1.recipient, data1.m_datetime])
-		.then(function(insertId){
-			data1.hotline_id = insertId;
-			return db.insert(conn, "insert into hotline set message = ?, sender = ?, " +
-				"recipient = ?, m_datetime = ?",
-				[data2.message, data2.sender, data2.recipient, data2.m_datetime])
+		var data1 = makeData("hello data1");
+		var data2 = makeData("hello data2");
+		insertHotline(conn, data1)
+		.then(function(){
+			return insertHotline(conn, data2);
 		})
-		.then(function(insertId){
-			data2.hotline_id = insertId;
+		.then(function(){
 			return db.query(conn, "select * from hotline where hotline_id in (?, ?) order by hotline_id",
 				[data1.hotline_id, data2.hotline_id]);
 		})
 		.then(function(rows){
 			expect(rows).to.eql([data1, data2]);
-			done();
 		})
-		.catch(done);
+		.then(done, done);
 	});
 	it("test insert/update/get", function(done){
-		var data = {
-			message: "hello",
-			sender: "practice",
-			recipient: "pharmacy",
-			m_datetime: "2016-06-19 15:21:00"			
-		};
+		var data = makeData("hello");
 		var newMessage = "changed";
-		db.insert(conn, "insert into hotline set message = ?, sender = ?, " +
-			"recipient = ?, m_datetime = ?",
-			[data.message, data.sender, data.recipient, data.m_datetime])
-		.then(function(insertId){
-			if( insertId <= 0 ){
-				throw new Error("invalid insertId")
-			}
-			data.hotline_id = insertId;
+		insertHotline(conn, data)
+		.then(function(){
 			return db.update(conn, "update hotline set message = ? where hotline_id = ?", 
 				[newMessage, data.hotline_id])
 		})
@@ -145,14 +121,13 @@ describe("Testing basic functionalisty (getConnection)", function(){
 			if( result !== true ){
 				throw new Error("db.update returned not true");
 			}
-			return db.get(conn, "select * from hotline where hotline_id = ?", [data.hotline_id])
+			return getHotline(conn, data.hotline_id)
 		})
 		.then(function(row){
 			data.message = newMessage;
 			expect(row).to.eql(data);
-			done();
 		})
-		.catch(done);
+		.then(done, done);
 	});
 	it("test insert/get/delete/find", function(done){
 		var data = {

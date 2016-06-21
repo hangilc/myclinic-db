@@ -130,19 +130,10 @@ describe("Testing basic functionalisty (getConnection)", function(){
 		.then(done, done);
 	});
 	it("test insert/get/delete/find", function(done){
-		var data = {
-			message: "hello",
-			sender: "practice",
-			recipient: "pharmacy",
-			m_datetime: "2016-06-19 15:21:00"			
-		};
-		db.insert(conn, "insert into hotline set message = ?, sender = ?, " +
-			"recipient = ?, m_datetime = ?",
-			[data.message, data.sender, data.recipient, data.m_datetime])
-		.then(function(insertId){
-			expect(insertId).to.above(0);
-			data.hotline_id = insertId;
-			return db.get(conn, "select * from hotline where hotline_id = ?", [data.hotline_id]);
+		var data = makeData("hello");
+		insertHotline(conn, data)
+		.then(function(){
+			return getHotline(conn, data.hotline_id);
 		})
 		.then(function(row){
 			expect(row).to.eql(data);
@@ -150,34 +141,23 @@ describe("Testing basic functionalisty (getConnection)", function(){
 		})
 		.then(function(result){
 			expect(result).to.equal(true);
-			return db.find(conn, "select * from hotline where hotline_id = ?", [data.hotline_id])
+			return findHotline(conn, data.hotline_id);
 		})
 		.then(function(result){
 			expect(result).to.equal(null);
-			done();
 		})
-		.catch(done);
+		.then(done, done);
 	});
 	it("test getValue", function(done){
-		var data = {
-			message: "hello",
-			sender: "practice",
-			recipient: "pharmacy",
-			m_datetime: "2016-06-19 15:21:00"			
-		};
-		db.insert(conn, "insert into hotline set message = ?, sender = ?, " +
-			"recipient = ?, m_datetime = ?",
-			[data.message, data.sender, data.recipient, data.m_datetime])
-		.then(function(insertId){
-			expect(insertId).to.above(0);
-			data.hotline_id = insertId;
+		var data = makeData("hello");
+		insertHotline(conn, data)
+		.then(function(){
 			return db.getValue(conn, "select count(*) from hotline where hotline_id = ?",
-				[insertId]);
+				[data.hotline_id]);
 		})
 		.then(function(result){
 			expect(result).to.equal(1);
-			done();
 		})
-		.catch(done);
+		.then(done, done);
 	});
 });

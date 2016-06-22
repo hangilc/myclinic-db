@@ -122,3 +122,28 @@ exports.alterKoukikourei = function(hoken){
 	hoken.valid_from = incYear(hoken.valid_from);
 	hoken.valid_upto = incYear(hoken.valid_upto);
 }
+
+var mockRoujinIndex = 1;
+
+exports.mockRoujin = function(){
+	return {
+		patient_id: 5843,
+		shichouson: 27138155,
+		jukyuusha: 8767006,
+		futan_wari: 1,
+		valid_from: "2006-08-01",
+		valid_upto: "2008-03-31"
+	};
+};
+
+exports.deleteUnusedRoujinColumn = function(roujin){
+	delete roujin.active;
+}
+
+exports.alterRoujin = function(hoken){
+	hoken.shichouson = (hoken.shichouson + 1) % 100000000;
+	hoken.jukyuusha = (hoken.jukyuusha + 1) % 10000000;
+	hoken.futan_wari = (hoken.futan_wari + 1) % 4;
+	hoken.valid_from = incYear(hoken.valid_from);
+	hoken.valid_upto = incYear(hoken.valid_upto);
+}

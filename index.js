@@ -10,4 +10,5 @@ extend(db, require("./lib/visit"));
 extend(db, require("./lib/text"));
 extend(db, require("./lib/shahokokuho"));
 extend(db, require("./lib/koukikourei"));
+extend(db, require("./lib/roujin"));
 module.exports = db;

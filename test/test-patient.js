@@ -70,7 +70,6 @@ describe("Testing patient", function(){
 				return;
 			}
 			expect(patientId).above(0);
-			patient.patient_id = patientId;
 			db.getPatient(conn, patientId, function(err, row){
 				if( err ){
 					done(err);
@@ -99,7 +98,6 @@ describe("Testing patient", function(){
 				return;
 			}
 			expect(patientId).above(0);
-			patient.patient_id = patientId;
 			db.findPatient(conn, patientId, function(err, row){
 				if( err ){
 					done(err);
@@ -119,7 +117,6 @@ describe("Testing patient", function(){
 			}
 			expect(patientId).above(0);
 			alterPatient(patient);
-			patient.patient_id = patientId;
 			db.updatePatient(conn, patient, function(err){
 				if( err ){
 					done(err);

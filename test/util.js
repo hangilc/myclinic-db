@@ -28,3 +28,19 @@ exports.createClearTableFun = function(tableName){
 	};
 };
 
+var mockTextIndex = 1;
+
+exports.mockText = function(){
+	return {
+		visit_id: 1,
+		content: "テスト" + mockTextIndex++
+	};
+};
+
+exports.deleteUnusedTextColumn = function(text){
+	delete text.pos;
+};
+
+exports.alterText = function(text){
+	text.content += ":altered" + mockTextIndex++; 
+}

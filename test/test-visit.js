@@ -112,7 +112,6 @@ function prepareRecentVisits(conn, done){
 						cb(err);
 						return;
 					}
-					visit.visit_id = visitId;
 					visit.patient = patient;
 					iter(i+1);
 				});
@@ -157,7 +156,6 @@ function prepareCalcVisits(conn, cb){
 					cb(err);
 					return;
 				}
-				visit.visit_id = visitId;
 				visits.push(visit);
 				iter(i+1);
 			})
@@ -204,7 +202,6 @@ describe("Testing visit", function(){
 				done(err);
 				return;
 			}
-			visit.visit_id = visitId;
 			db.getVisit(conn, visitId, function(err, row){
 				if( err ){
 					done(err);
@@ -223,7 +220,6 @@ describe("Testing visit", function(){
 				done(err);
 				return;
 			}
-			visit.visit_id = visitId;
 			alterVisit(visit);
 			db.updateVisit(conn, visit, function(err){
 				if( err ){
@@ -249,7 +245,6 @@ describe("Testing visit", function(){
 				done(err);
 				return;
 			}
-			visit.visit_id = visitId;
 			db.deleteVisit(conn, visitId, done);
 		})
 	});
@@ -260,7 +255,6 @@ describe("Testing visit", function(){
 				done(err);
 				return;
 			}
-			visit.visit_id = visitId;
 			db.findVisit(conn, visitId, function(err, row){
 				if( err ){
 					done(err);

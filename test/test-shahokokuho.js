@@ -5,7 +5,7 @@ var db = require("../index");
 
 var clearTable = util.createClearTableFun("hoken_shahokokuho");
 
-describe("Testing text", function(){
+describe("Testing shahokokuho", function(){
 	before(clearTable);
 	after(clearTable);
 

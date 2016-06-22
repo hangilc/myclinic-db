@@ -6,6 +6,25 @@ function incDate(sqldate, n){
 	return moment(sqldate).add(1, "days").format("YYYY-MM-DD");
 }
 
+function incMonth(sqldate, n){
+	if( n === undefined ) n = 1;
+	return moment(sqldate).add(1, "months").format("YYYY-MM-DD");
+}
+
+function incYear(sqldate, n){
+	if( n === undefined ) n = 1;
+	return moment(sqldate).add(1, "years").format("YYYY-MM-DD");
+}
+
+function pad(num, digits){
+	num = "" + num;
+	if( num.length < digits ){
+		return pad("0" + num, digits - 1);
+	} else {
+		return num;
+	}
+}
+
 exports.createClearTableFun = function(tableName){
 	return function(done){
 		setup.connect(function(err, conn){
@@ -77,4 +96,29 @@ exports.alterShahokokuho = function(hoken){
 	hoken.honnin = hoken.honnin === 0 ? 1 : 0;
 	hoken.valid_from = incDate(hoken.valid_from);
 	hoken.valid_upto = incDate(hoken.valid_upto);
+}
+
+var mockKoukikoureiIndex = 1;
+
+exports.mockKoukikourei = function(){
+	return {
+		patient_id: 3241,
+		hokensha_bangou: "39131156",
+		hihokensha_bangou: "04324066",
+		futan_wari: 1,
+		valid_from: "2015-08-01",
+		valid_upto: "2016-07-31"
+	};
+};
+
+exports.deleteUnusedKoukikoureiColumn = function(koukikourei){
+	// nop
+}
+
+exports.alterKoukikourei = function(hoken){
+	hoken.hokensha_bangou = hoken.hokensha_bangou === "39131156" ? "39131123" : "39131156";
+	hoken.hihokensha_bangou = pad((((+hoken.hihokensha_bangou) + 1) % 100000000) + "", 8);
+	hoken.futan_wari = (hoken.futan_wari + 1) % 4;
+	hoken.valid_from = incYear(hoken.valid_from);
+	hoken.valid_upto = incYear(hoken.valid_upto);
 }

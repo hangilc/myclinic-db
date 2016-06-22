@@ -8,4 +8,5 @@ var db = {}
 extend(db, require("./lib/patient"));
 extend(db, require("./lib/visit"));
 extend(db, require("./lib/text"));
+extend(db, require("./lib/shahokokuho"));
 module.exports = db;

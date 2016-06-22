@@ -35,6 +35,93 @@ function deleteUnusedColumn(visit){
 	delete visit.jihi;
 }
 
+function mockPatient(){
+	return {
+		last_name: "診療",
+		first_name: "太郎",
+		last_name_yomi: "しんりょう",
+		first_name_yomi: "たろう",
+		birth_day: "1957-06-02",
+		sex: "M",
+		phone: "03-1234-5678",
+		address: "no where"
+	};
+}
+
+function prepareRecentVisits(conn, done){
+	var visits = [], mockIndex = 1;
+	conn.query("delete from visit", function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		insertTestVisits(function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			var recents = visits.slice(-30).map(function(item){
+				return {
+					patient_id: item.patient.patient_id,
+					last_name: item.patient.last_name,
+					first_name: item.patient.first_name,
+					last_name_yomi: item.patient.last_name_yomi,
+					first_name_yomi: item.patient.first_name_yomi,
+					visit_id: item.visit_id
+				};
+			})
+			done(null, recents.reverse());
+		})
+	});
+
+	function insertPatient(cb){
+		patient = mockPatient();
+		patient.last_name += mockIndex;
+		patient.first_name += mockIndex;
+		patient.last_name_yomi += mockIndex;
+		patient.first_name_yomi += mockIndex;
+		mockIndex += 1;
+		db.insertPatient(conn, patient, function(err, patientId){
+			if( err ){
+				cb(err);
+				return;
+			}
+			patient.patient_id = patientId;
+			cb(null, patient);
+		})
+	}
+
+	function insertTestVisits(cb){
+		var n = 32;
+		iter(0);
+
+		function iter(i){
+			if( i >= n ){
+				cb();
+				return;
+			}
+			insertPatient(function(err, patient){
+				if( err ){
+					cb(err);
+					return;
+				}
+				var visit = mockVisit();
+				visit.patient_id = patient.patient_id;
+				visits.push(visit);
+				db.insertVisit(conn, visit, function(err, visitId){
+					if( err ){
+						cb(err);
+						return;
+					}
+					visit.visit_id = visitId;
+					visit.patient = patient;
+					iter(i+1);
+				});
+			})
+		}
+	}
+}
+
 describe("Testing visit", function(){
 	before(clearVisitTable);
 	after(clearVisitTable);
@@ -162,6 +249,22 @@ describe("Testing visit", function(){
 					expect(row).null;
 					done();
 				})
+			})
+		})
+	});
+	it("recentVisits", function(done){
+		prepareRecentVisits(conn, function(err, prep){
+			if( err ){
+				done(err);
+				return;
+			}
+			db.recentVisits(conn, function(err, result){
+				if( err ){
+					done(err);
+					return;
+				}
+				expect(result).eql(prep);
+				done();
 			})
 		})
 	})

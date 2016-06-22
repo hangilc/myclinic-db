@@ -19,3 +19,4 @@ exports.createClearTableFun = function(tableName){
 		})
 	};
 };
+

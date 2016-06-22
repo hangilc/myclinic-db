@@ -5,5 +5,6 @@ function extend(dst, src){
 }
 
 var db = {}
-extend(db, require("./patient"));
+extend(db, require("./lib/patient"));
+extend(db, require("./lib/visit"));
 module.exports = db;

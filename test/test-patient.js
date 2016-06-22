@@ -2,40 +2,13 @@ var expect = require("chai").expect;
 var setup = require("./setup");
 var db = require("../index");
 var moment = require("moment");
+var util = require("./util");
 
-function clearPatientTable(done){
-	setup.connect(function(err, conn){
-		if( err ){
-			done(err);
-			return;
-		}
-		conn.query("delete from patient", function(err){
-			if( err ){
-				setup.release(conn, function(){
-					done(err);
-				});
-				return;
-			}
-			setup.release(conn, done);
-		})
-	})
-}
+var clearPatientTable = util.createDeleteTableFun("patient");
 
 describe("Testing patient", function(){
 	before(clearPatientTable);
-	after(function(done){
-		clearPatientTable(function(err){
-			if( err ){
-				done(err);
-				return;
-			}
-			if( !setup.confirmNoLeak() ){
-				done("connection leak");
-				return;
-			}
-			done();
-		})
-	});
+	after(clearPatientTable);
 
 	var conn;
 

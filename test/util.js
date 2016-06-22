@@ -1,6 +1,6 @@
 var setup = require("./setup");
 
-exports.createDeleteTableFun = function(tableName){
+exports.createClearTableFun = function(tableName){
 	return function(done){
 		setup.connect(function(err, conn){
 			if( err ){

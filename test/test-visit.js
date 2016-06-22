@@ -3,7 +3,7 @@ var setup = require("./setup");
 var util = require("./util");
 var db = require("../index");
 
-var deleteVisitTable = util.createDeleteTableFun("visit");
+var clearVisitTable = util.createClearTableFun("visit");
 
 function mockVisit(){
 	return {
@@ -36,8 +36,8 @@ function deleteUnusedColumn(visit){
 }
 
 describe("Testing visit", function(){
-	before(deleteVisitTable);
-	after(deleteVisitTable);
+	before(clearVisitTable);
+	after(clearVisitTable);
 
 	var conn;
 
@@ -107,6 +107,59 @@ describe("Testing visit", function(){
 					}
 					deleteUnusedColumn(row);
 					expect(row).eql(visit);
+					done();
+				})
+			})
+		})
+	});
+	it("delete", function(done){
+		var visit = mockVisit();
+		db.insertVisit(conn, visit, function(err, visitId){
+			if( err ){
+				done(err);
+				return;
+			}
+			visit.visit_id = visitId;
+			db.deleteVisit(conn, visitId, done);
+		})
+	});
+	it("find", function(done){
+		var visit = mockVisit();
+		db.insertVisit(conn, visit, function(err, visitId){
+			if( err ){
+				done(err);
+				return;
+			}
+			visit.visit_id = visitId;
+			db.findVisit(conn, visitId, function(err, row){
+				if( err ){
+					done(err);
+					return;
+				}
+				deleteUnusedColumn(row);
+				expect(row).eql(visit);
+				done();
+			})
+		})
+	});
+	it("delete/find", function(done){
+		var visit = mockVisit();
+		db.insertVisit(conn, visit, function(err, visitId){
+			if( err ){
+				done(err);
+				return;
+			}
+			db.deleteVisit(conn, visitId, function(err){
+				if( err ){
+					done(err);
+					return;
+				}
+				db.findVisit(conn, visitId, function(err, row){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(row).null;
 					done();
 				})
 			})

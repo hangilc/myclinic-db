@@ -4,7 +4,7 @@ var db = require("../index");
 var moment = require("moment");
 var util = require("./util");
 
-var clearPatientTable = util.createDeleteTableFun("patient");
+var clearPatientTable = util.createClearTableFun("patient");
 
 describe("Testing patient", function(){
 	before(clearPatientTable);

@@ -1,15 +1,28 @@
-var db = require("../index");
-var dbConfig = require("./db-config");
-var store = db.createPool(dbConfig);
+var config = require("./db-config");
+var mysql = require("mysql");
 
-exports.openConnection = function(cb){
-	store.openConnection(cb);
-};
+var nConn = 0;
 
-exports.closeConnection = function(conn){
-	store.closeConnection(conn);
-};
+exports.connect = function(cb){
+	if( nConn > 0 ){
+		cb("connection not released");
+	}
+	var conn = mysql.createConnection(config);
+	nConn += 1;
+	conn.connect(function(err){
+		if( err ){
+			conn.end();
+			nConn -= 1;
+		}
+		cb(err, conn);
+	});
+}
 
-exports.cleanUp = function(){
-	store.dispose();
+exports.release = function(conn, cb){
+	nConn -= 1;
+	conn.end(cb);
+}
+
+exports.confirmNoLeak = function(){
+	return nConn == 0;
 }

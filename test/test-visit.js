@@ -48,6 +48,22 @@ function mockPatient(){
 	};
 }
 
+function insertPatient(conn, mockIndex, cb){
+	patient = mockPatient();
+	patient.last_name += mockIndex;
+	patient.first_name += mockIndex;
+	patient.last_name_yomi += mockIndex;
+	patient.first_name_yomi += mockIndex;
+	db.insertPatient(conn, patient, function(err, patientId){
+		if( err ){
+			cb(err);
+			return;
+		}
+		patient.patient_id = patientId;
+		cb(null, patient);
+	})
+}
+
 function prepareRecentVisits(conn, done){
 	var visits = [], mockIndex = 1;
 	conn.query("delete from visit", function(err){
@@ -74,23 +90,6 @@ function prepareRecentVisits(conn, done){
 		})
 	});
 
-	function insertPatient(cb){
-		patient = mockPatient();
-		patient.last_name += mockIndex;
-		patient.first_name += mockIndex;
-		patient.last_name_yomi += mockIndex;
-		patient.first_name_yomi += mockIndex;
-		mockIndex += 1;
-		db.insertPatient(conn, patient, function(err, patientId){
-			if( err ){
-				cb(err);
-				return;
-			}
-			patient.patient_id = patientId;
-			cb(null, patient);
-		})
-	}
-
 	function insertTestVisits(cb){
 		var n = 32;
 		iter(0);
@@ -100,7 +99,7 @@ function prepareRecentVisits(conn, done){
 				cb();
 				return;
 			}
-			insertPatient(function(err, patient){
+			insertPatient(conn, mockIndex++, function(err, patient){
 				if( err ){
 					cb(err);
 					return;
@@ -117,6 +116,50 @@ function prepareRecentVisits(conn, done){
 					visit.patient = patient;
 					iter(i+1);
 				});
+			})
+		}
+	}
+}
+
+function prepareCalcVisits(conn, cb){
+	var visits = [], n = 3;
+	conn.query("delete from visit", function(err){
+		if( err ){
+			cb(err);
+			return;
+		}
+		insertPatient(conn, "", function(err, patient){
+			if( err ){
+				cb(err);
+				return;
+			}
+			insertVisits(patient.patient_id, n, function(err){
+				if( err ){
+					cb(err);
+					return;
+				}
+				cb(undefined, {patient_id: patient.patient_id, n: n});
+			})
+		})
+	});
+
+	function insertVisits(patientId, n, cb){
+		iter(0);
+		function iter(i){
+			if( i >= n ){
+				cb();
+				return;
+			}
+			var visit = mockVisit();
+			visit.patient_id = patientId;
+			db.insertVisit(conn, visit, function(err, visitId){
+				if( err ){
+					cb(err);
+					return;
+				}
+				visit.visit_id = visitId;
+				visits.push(visit);
+				iter(i+1);
 			})
 		}
 	}
@@ -264,6 +307,24 @@ describe("Testing visit", function(){
 					return;
 				}
 				expect(result).eql(prep);
+				done();
+			})
+		})
+	});
+	it("calcVisits", function(done){
+		prepareCalcVisits(conn, function(err, prep){
+			if( err ){
+				done(err);
+				return;
+			}
+			var patientId = prep.patient_id;
+			var n = prep.n;
+			db.calcVisits(conn, patientId, function(err, count){
+				if( err ){
+					done(err);
+					return;
+				}
+				expect(count).equal(n);
 				done();
 			})
 		})

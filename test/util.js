@@ -14,7 +14,15 @@ exports.createClearTableFun = function(tableName){
 					});
 					return;
 				}
-				setup.release(conn, done);
+				conn.query("alter table " + tableName + " auto_increment = 1", function(err){
+					if( err ){
+						setup.release(conn, function(){
+							done(err);
+						});
+						return;
+					}
+					setup.release(conn, done);
+				})
 			})
 		})
 	};

@@ -147,3 +147,27 @@ exports.alterRoujin = function(hoken){
 	hoken.valid_from = incYear(hoken.valid_from);
 	hoken.valid_upto = incYear(hoken.valid_upto);
 }
+
+var mockKouhiIndex = 1;
+
+exports.mockKouhi = function(){
+	return {
+		patient_id: 3294,
+		futansha: 80137151,
+		jukyuusha: 9518832,
+		valid_from: "2015-10-01",
+		valid_upto: "2016-09-30"
+	};
+};
+
+exports.deleteUnusedKouhiColumn = function(kouhi){
+	delete kouhi.active;
+	delete kouhi.category;
+}
+
+exports.alterKouhi = function(hoken){
+	hoken.futansha = (hoken.futansha + 1) % 100000000;
+	hoken.jukyuusha = (hoken.jukyuusha + 1) % 10000000;
+	hoken.valid_from = incYear(hoken.valid_from);
+	hoken.valid_upto = incYear(hoken.valid_upto);
+}

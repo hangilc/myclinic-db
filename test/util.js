@@ -229,3 +229,21 @@ exports.deleteUnusedShinryouColumn = function(data){
 exports.alterShinryou = function(data){
 	data.shinryoucode = rotate(data.shinryoucode, [111003610, 120000710, 120001810]);
 }
+
+var mockConductIndex = 1;
+
+exports.mockConduct = function(){
+	return {
+		visit_id: 3000 + mockConductIndex++,
+		kind: 0
+	};
+};
+
+exports.deleteUnusedConductColumn = function(data){
+	delete data.active;
+	delete data.category;
+}
+
+exports.alterConduct = function(data){
+	data.kind = rotate(data.kind, [0, 1, 2, 3]);
+}

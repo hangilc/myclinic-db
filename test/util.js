@@ -264,3 +264,20 @@ exports.deleteUnusedGazouLabelColumn = function(data){
 exports.alterGazouLabel = function(data){
 	data.label = rotate(data.label, ["胸部単純Ｘ線", "腹部単純Ｘ線"])
 }
+
+var mockConductShinryouIndex = 1;
+
+exports.mockConductShinryou = function(){
+	return {
+		visit_conduct_id: 300 + mockConductShinryouIndex++,
+		shinryoucode: 170001910
+	};
+};
+
+exports.deleteUnusedConductShinryouColumn = function(data){
+
+}
+
+exports.alterConductShinryou = function(data){
+	data.shinryoucode = rotate(data.shinryoucode, [170001910, 170000410])
+}

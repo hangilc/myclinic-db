@@ -281,3 +281,42 @@ exports.deleteUnusedConductShinryouColumn = function(data){
 exports.alterConductShinryou = function(data){
 	data.shinryoucode = rotate(data.shinryoucode, [170001910, 170000410])
 }
+
+var mockConductDrugIndex = 1;
+
+exports.mockConductDrug = function(){
+	return {
+		visit_conduct_id: 400 + mockConductDrugIndex++,
+		iyakuhincode: 640453081,
+		amount: 1.0
+	};
+};
+
+exports.deleteUnusedConductDrugColumn = function(data){
+
+}
+
+exports.alterConductDrug = function(data){
+	data.iyakuhincode = rotate(data.iyakuhincode, [640453081, 643310065]);
+	data.amount += 1.0;
+}
+
+var mockConductKizaiIndex = 1;
+
+exports.mockConductKizai = function(){
+	return {
+		visit_conduct_id: 500 + mockConductKizaiIndex++,
+		kizaicode: 700030000,
+		amount: 1.0
+	};
+};
+
+exports.deleteUnusedConductKizaiColumn = function(data){
+
+}
+
+exports.alterConductKizai = function(data){
+	data.kizaicode = rotate(data.kizaicode, [700030000, 700080000]);
+	data.amount += 1.0;
+}
+

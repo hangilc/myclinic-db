@@ -17,4 +17,6 @@ extend(db, require("./lib/shinryou"));
 extend(db, require("./lib/conduct"));
 extend(db, require("./lib/gazou-label"));
 extend(db, require("./lib/conduct-shinryou"));
+extend(db, require("./lib/conduct-drug"));
+extend(db, require("./lib/conduct-kizai"));
 module.exports = db;

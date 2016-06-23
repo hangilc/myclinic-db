@@ -212,3 +212,20 @@ exports.alterDrug = function(data){
 	data.d_category = rotate(data.d_category, [0, 1, 2, 3]);
 	data.d_prescribed = rotate(data.d_prescribed, [0, 1]);
 }
+
+var mockShinryouIndex = 1;
+
+exports.mockShinryou = function(){
+	return {
+		visit_id: 1000 + mockShinryouIndex++,
+		shinryoucode: 111003610
+	};
+};
+
+exports.deleteUnusedShinryouColumn = function(data){
+	// nop
+}
+
+exports.alterShinryou = function(data){
+	data.shinryoucode = rotate(data.shinryoucode, [111003610, 120000710, 120001810]);
+}

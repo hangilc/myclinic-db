@@ -13,4 +13,5 @@ extend(db, require("./lib/koukikourei"));
 extend(db, require("./lib/roujin"));
 extend(db, require("./lib/kouhi"));
 extend(db, require("./lib/drug"));
+extend(db, require("./lib/shinryou"));
 module.exports = db;

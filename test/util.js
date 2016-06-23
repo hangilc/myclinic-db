@@ -247,3 +247,20 @@ exports.deleteUnusedConductColumn = function(data){
 exports.alterConduct = function(data){
 	data.kind = rotate(data.kind, [0, 1, 2, 3]);
 }
+
+var mockGazouLabelIndex = 1;
+
+exports.mockGazouLabel = function(){
+	return {
+		visit_conduct_id: 200 + mockGazouLabelIndex++,
+		label: "胸部単純Ｘ線"
+	};
+};
+
+exports.deleteUnusedGazouLabelColumn = function(data){
+	
+}
+
+exports.alterGazouLabel = function(data){
+	data.label = rotate(data.label, ["胸部単純Ｘ線", "腹部単純Ｘ線"])
+}

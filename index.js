@@ -15,4 +15,5 @@ extend(db, require("./lib/kouhi"));
 extend(db, require("./lib/drug"));
 extend(db, require("./lib/shinryou"));
 extend(db, require("./lib/conduct"));
+extend(db, require("./lib/gazou-label"));
 module.exports = db;

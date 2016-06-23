@@ -25,6 +25,19 @@ function pad(num, digits){
 	}
 }
 
+function rotate(current, values){
+	var i;
+	i = values.indexOf(current);
+	if( i < 0 ){
+		return values[0];
+	}
+	i += 1;
+	if( i >= values.length ){
+		i = 0;
+	}
+	return values[i];
+}
+
 exports.createClearTableFun = function(tableName){
 	return function(done){
 		setup.connect(function(err, conn){
@@ -170,4 +183,32 @@ exports.alterKouhi = function(hoken){
 	hoken.jukyuusha = (hoken.jukyuusha + 1) % 10000000;
 	hoken.valid_from = incYear(hoken.valid_from);
 	hoken.valid_upto = incYear(hoken.valid_upto);
+}
+
+var mockDrugIndex = 1;
+
+exports.mockDrug = function(){
+	return {
+		visit_id: 1000,
+		d_iyakuhincode: 611180001,
+		d_amount: "3",
+		d_usage: "分３　毎食後",
+		d_days: 5,
+		d_category: 0,
+		d_prescribed: 0
+	};
+};
+
+exports.deleteUnusedDrugColumn = function(data){
+	delete data.d_pos;
+	delete data.d_shuukeisaki;
+}
+
+exports.alterDrug = function(data){
+	data.d_iyakuhincode = rotate(data.d_iyakuhincode, [611180001, 616130295, 662230003]);
+	data.d_amount = (+data.d_amount + 1) + "";
+	data.d_usage = rotate(data.d_usage, ["分３　毎食後", "分２　朝夕食後", "分１　朝食後"]);
+	data.d_days = data.d_days + 1;
+	data.d_category = rotate(data.d_category, [0, 1, 2, 3]);
+	data.d_prescribed = rotate(data.d_prescribed, [0, 1]);
 }

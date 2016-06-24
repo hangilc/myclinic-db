@@ -403,3 +403,20 @@ exports.alterCharge = function(data){
 	data.charge += 10;
 }
 
+var mockWqueueIndex = 1;
+
+exports.mockWqueue = function(){
+	return {
+		visit_id: 4321 + mockWqueueIndex++,
+		wait_state: 0
+	};
+};
+
+exports.deleteUnusedWqueueColumn = function(data){
+
+}
+
+exports.alterWqueue = function(data){
+	data.wait_state = rotate(data.wait_state, [0, 1, 2, 3]);
+}
+

@@ -23,4 +23,5 @@ extend(db, require("./lib/iyakuhin-master"));
 extend(db, require("./lib/shinryou-master"));
 extend(db, require("./lib/kizai-master"));
 extend(db, require("./lib/charge"));
+extend(db, require("./lib/wqueue"));
 module.exports = db;

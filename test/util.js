@@ -359,10 +359,29 @@ exports.mockShinryouMaster = function(){
 		code_alpha: "A",
 		code_kubun: "000",
 		valid_from: "2016-04-01",
-		valid_upto: "0000-00-00",
+		valid_upto: "0000-00-00"
 	};
 };
 
 exports.deleteUnusedShinryouMasterColumn = function(data){
 	
 }
+
+var mockKizaiMasterIndex = 1;
+
+exports.mockKizaiMaster = function(){
+	return {
+ 		kizaicode: 700030000 + mockKizaiMasterIndex++,
+		name: "大角",
+		yomi: "ﾀﾞｲｶｸ",
+		unit: "枚",
+		kingaku: "116.00",
+		valid_from: "2016-04-01",
+		valid_upto: "0000-00-00"
+	};
+};
+
+exports.deleteUnusedKizaiMasterColumn = function(data){
+	
+}
+

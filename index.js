@@ -19,4 +19,5 @@ extend(db, require("./lib/gazou-label"));
 extend(db, require("./lib/conduct-shinryou"));
 extend(db, require("./lib/conduct-drug"));
 extend(db, require("./lib/conduct-kizai"));
+extend(db, require("./lib/iyakuhin-master"));
 module.exports = db;

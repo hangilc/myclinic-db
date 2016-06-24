@@ -320,3 +320,23 @@ exports.alterConductKizai = function(data){
 	data.amount += 1.0;
 }
 
+var mockIyakuhinMasterIndex = 1;
+
+exports.mockIyakuhinMaster = function(){
+	return {
+		iyakuhincode: 620000033 + mockIyakuhinMasterIndex++,
+		name: "カロナール錠３００　３００ｍｇ",
+		yomi: "ｶﾛﾅｰﾙｼﾞｮｳ300",
+		unit: "錠",
+		yakka: "8.50",
+		madoku: "0",
+		kouhatsu: "1",
+		zaikei: "1",
+		valid_from: "2016-04-01",
+		valid_upto: "0000-00-00"
+	};
+};
+
+exports.deleteUnusedIyakuhinMasterColumn = function(data){
+	delete data.yakkacode;
+}

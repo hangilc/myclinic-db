@@ -345,7 +345,7 @@ var mockShinryouMasterIndex = 1;
 
 exports.mockShinryouMaster = function(){
 	return {
-		shinryoucode: 111000110,
+		shinryoucode: 111000110 + mockShinryouMasterIndex++,
 		name: "初診",
 		tensuu: "282.00",
 		tensuu_shikibetsu: "3",

@@ -28,8 +28,8 @@ describe("Testing shinryou master", function(){
 	});
 
 	it("insert", function(done){
-		var master = util.mockIyakuhinMaster();
-		db.insertIyakuhinMaster(conn, master, function(err){
+		var master = util.mockShinryouMaster();
+		db.insertShinryouMaster(conn, master, function(err){
 			if( err ){
 				done(err);
 				return;
@@ -38,95 +38,95 @@ describe("Testing shinryou master", function(){
 		})
 	});
 	it("get (no limit)", function(done){
-		var master = util.mockIyakuhinMaster();
+		var master = util.mockShinryouMaster();
 		master.valid_upto = "0000-00-00";
 		var at = moment(master.valid_from).add(1, "month").format("YYYY-MM-DD");
-		db.insertIyakuhinMaster(conn, master, function(err){
+		db.insertShinryouMaster(conn, master, function(err){
 			if( err ){
 				done(err);
 				return;
 			}
-			db.getIyakuhinMaster(conn, master.iyakuhincode, at, function(err, row){
+			db.getShinryouMaster(conn, master.shinryoucode, at, function(err, row){
 				if( err ){
 					done(err);
 					return;
 				}
-				util.deleteUnusedIyakuhinMasterColumn(row);
+				util.deleteUnusedShinryouMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})
 		})
 	});
 	it("get (with limit)", function(done){
-		var master = util.mockIyakuhinMaster();
+		var master = util.mockShinryouMaster();
 		master.valid_upto = moment(master.valid_from).add(1, "year").format("YYYY-MM-DD");
 		var at = moment(master.valid_from).add(1, "month").format("YYYY-MM-DD");
-		db.insertIyakuhinMaster(conn, master, function(err){
+		db.insertShinryouMaster(conn, master, function(err){
 			if( err ){
 				done(err);
 				return;
 			}
-			db.getIyakuhinMaster(conn, master.iyakuhincode, at, function(err, row){
+			db.getShinryouMaster(conn, master.shinryoucode, at, function(err, row){
 				if( err ){
 					done(err);
 					return;
 				}
-				util.deleteUnusedIyakuhinMasterColumn(row);
+				util.deleteUnusedShinryouMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})
 		})
 	});
 	it("find (no limit)", function(done){
-		var master = util.mockIyakuhinMaster();
+		var master = util.mockShinryouMaster();
 		master.valid_upto = "0000-00-00";
 		var at = moment(master.valid_from).add(1, "month").format("YYYY-MM-DD");
-		db.insertIyakuhinMaster(conn, master, function(err){
+		db.insertShinryouMaster(conn, master, function(err){
 			if( err ){
 				done(err);
 				return;
 			}
-			db.findIyakuhinMaster(conn, master.iyakuhincode, at, function(err, row){
+			db.findShinryouMaster(conn, master.shinryoucode, at, function(err, row){
 				if( err ){
 					done(err);
 					return;
 				}
-				util.deleteUnusedIyakuhinMasterColumn(row);
+				util.deleteUnusedShinryouMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})
 		})
 	});
 	it("find (with limit)", function(done){
-		var master = util.mockIyakuhinMaster();
+		var master = util.mockShinryouMaster();
 		master.valid_upto = moment(master.valid_from).add(1, "year").format("YYYY-MM-DD");
 		var at = moment(master.valid_from).add(1, "month").format("YYYY-MM-DD");
-		db.insertIyakuhinMaster(conn, master, function(err){
+		db.insertShinryouMaster(conn, master, function(err){
 			if( err ){
 				done(err);
 				return;
 			}
-			db.findIyakuhinMaster(conn, master.iyakuhincode, at, function(err, row){
+			db.findShinryouMaster(conn, master.shinryoucode, at, function(err, row){
 				if( err ){
 					done(err);
 					return;
 				}
-				util.deleteUnusedIyakuhinMasterColumn(row);
+				util.deleteUnusedShinryouMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})
 		})
 	});
 	it("find (no limit, fail)", function(done){
-		var master = util.mockIyakuhinMaster();
+		var master = util.mockShinryouMaster();
 		master.valid_upto = "0000-00-00";
 		var at = moment(master.valid_from).add(-1, "month").format("YYYY-MM-DD");
-		db.insertIyakuhinMaster(conn, master, function(err){
+		db.insertShinryouMaster(conn, master, function(err){
 			if( err ){
 				done(err);
 				return;
 			}
-			db.findIyakuhinMaster(conn, master.iyakuhincode, at, function(err, row){
+			db.findShinryouMaster(conn, master.shinryoucode, at, function(err, row){
 				if( err ){
 					done(err);
 					return;
@@ -137,15 +137,15 @@ describe("Testing shinryou master", function(){
 		})
 	});
 	it("find (with limit, fail)", function(done){
-		var master = util.mockIyakuhinMaster();
+		var master = util.mockShinryouMaster();
 		master.valid_upto = moment(master.valid_from).add(1, "year").format("YYYY-MM-DD");
 		var at = moment(master.valid_upto).add(1, "day").format("YYYY-MM-DD");
-		db.insertIyakuhinMaster(conn, master, function(err){
+		db.insertShinryouMaster(conn, master, function(err){
 			if( err ){
 				done(err);
 				return;
 			}
-			db.findIyakuhinMaster(conn, master.iyakuhincode, at, function(err, row){
+			db.findShinryouMaster(conn, master.shinryoucode, at, function(err, row){
 				if( err ){
 					done(err);
 					return;
@@ -156,15 +156,15 @@ describe("Testing shinryou master", function(){
 		})
 	});
 	it("find (with limit, datetime)", function(done){
-		var master = util.mockIyakuhinMaster();
+		var master = util.mockShinryouMaster();
 		master.valid_upto = moment(master.valid_from).add(1, "year").format("YYYY-MM-DD");
 		var at = moment(master.valid_upto).add(1, "hour").format("YYYY-MM-DD HH:mm:ss");
-		db.insertIyakuhinMaster(conn, master, function(err){
+		db.insertShinryouMaster(conn, master, function(err){
 			if( err ){
 				done(err);
 				return;
 			}
-			db.findIyakuhinMaster(conn, master.iyakuhincode, at, function(err, row){
+			db.findShinryouMaster(conn, master.shinryoucode, at, function(err, row){
 				if( err ){
 					done(err);
 					return;

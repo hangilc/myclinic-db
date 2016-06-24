@@ -5,18 +5,7 @@ var db = require("../index");
 
 var clearVisitTable = util.createClearTableFun("visit");
 
-function mockVisit(){
-	return {
-		patient_id: 199,
-		v_datetime: "2016-06-22 11:51:03",
-		shahokokuho_id: 1234,
-		koukikourei_id: 0,
-		roujin_id: 0,
-		kouhi_1_id: 0,
-		kouhi_2_id: 0,
-		kouhi_3_id: 0
-	};
-}
+var mockVisit = util.mockVisit;
 
 function alterVisit(visit){
 	visit.shahokokuho_id = alter(visit.shahokokuho_id);
@@ -62,62 +51,6 @@ function insertPatient(conn, mockIndex, cb){
 		patient.patient_id = patientId;
 		cb(null, patient);
 	})
-}
-
-function prepareRecentVisits(conn, done){
-	var visits = [], mockIndex = 1;
-	conn.query("delete from visit", function(err){
-		if( err ){
-			done(err);
-			return;
-		}
-		insertTestVisits(function(err){
-			if( err ){
-				done(err);
-				return;
-			}
-			var recents = visits.slice(-30).map(function(item){
-				return {
-					patient_id: item.patient.patient_id,
-					last_name: item.patient.last_name,
-					first_name: item.patient.first_name,
-					last_name_yomi: item.patient.last_name_yomi,
-					first_name_yomi: item.patient.first_name_yomi,
-					visit_id: item.visit_id
-				};
-			})
-			done(null, recents.reverse());
-		})
-	});
-
-	function insertTestVisits(cb){
-		var n = 32;
-		iter(0);
-
-		function iter(i){
-			if( i >= n ){
-				cb();
-				return;
-			}
-			insertPatient(conn, mockIndex++, function(err, patient){
-				if( err ){
-					cb(err);
-					return;
-				}
-				var visit = mockVisit();
-				visit.patient_id = patient.patient_id;
-				visits.push(visit);
-				db.insertVisit(conn, visit, function(err, visitId){
-					if( err ){
-						cb(err);
-						return;
-					}
-					visit.patient = patient;
-					iter(i+1);
-				});
-			})
-		}
-	}
 }
 
 function prepareCalcVisits(conn, cb){
@@ -286,22 +219,6 @@ describe("Testing visit", function(){
 					expect(row).null;
 					done();
 				})
-			})
-		})
-	});
-	it("recentVisits", function(done){
-		prepareRecentVisits(conn, function(err, prep){
-			if( err ){
-				done(err);
-				return;
-			}
-			db.recentVisits(conn, function(err, result){
-				if( err ){
-					done(err);
-					return;
-				}
-				expect(result).eql(prep);
-				done();
 			})
 		})
 	});

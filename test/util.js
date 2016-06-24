@@ -38,6 +38,85 @@ function rotate(current, values){
 	return values[i];
 }
 
+exports.clearTable = function(conn, tableName, cb){
+	conn.query("delete from " + tableName, cb);
+};
+
+exports.resetTable = function(conn, tableName, cb){
+	exports.clearTable(conn, tableName, function(err){
+		if( err ){
+			cb(err);
+			return;
+		}
+		conn.query("alter table " + tableName + " auto_increment = 1", cb);
+	})
+};
+
+exports.clearTables = function(conn, tableNames, cb){
+	iter(0);
+
+	function iter(i){
+		if( i >= tableNames.length ){
+			cb();
+			return;
+		}
+		exports.clearTable(conn, tableNames[i], function(err){
+			if( err ){
+				cb(err);
+				return;
+			}
+			iter(i+1);
+		})
+	}
+};
+
+exports.resetTables = function(conn, tableNames, cb){
+	iter(0);
+
+	function iter(i){
+		if( i >= tableNames.length ){
+			cb();
+			return;
+		}
+		exports.resetTable(conn, tableNames[i], function(err){
+			if( err ){
+				cb(err);
+				return;
+			}
+			iter(i+1);
+		})
+	}
+};
+
+exports.initTables = function(conn, clearTables, resetTables, cb){
+	exports.clearTables(conn, clearTables, function(err){
+		if( err ){
+			cb(err);
+			return;
+		}
+		exports.resetTables(conn, resetTables, cb);
+	})
+};
+
+exports.withConnect = function(fn, done){
+	setup.connect(function(err, conn){
+		if( err ){
+			done(err);
+			return;
+		}
+		fn(conn, function(err){
+			if( err ){
+				setup.release(conn, function(err_){
+					console.log("setup.release failed", err_);
+					done(err);
+				})
+				return;
+			}
+			setup.release(conn, done);
+		})
+	})
+}
+
 exports.createClearTableFun = function(tableName){
 	return function(done){
 		setup.connect(function(err, conn){
@@ -65,6 +144,33 @@ exports.createClearTableFun = function(tableName){
 		})
 	};
 };
+
+exports.mockPatient = function(){
+	return {
+		last_name: "診療",
+		first_name: "太郎",
+		last_name_yomi: "しんりょう",
+		first_name_yomi: "たろう",
+		birth_day: "1957-06-02",
+		sex: "M",
+		phone: "03-1234-5678",
+		address: "no where"
+	};
+};
+
+exports.mockVisit = function(){
+	return {
+		patient_id: 199,
+		v_datetime: "2016-06-22 11:51:03",
+		shahokokuho_id: 1234,
+		koukikourei_id: 0,
+		roujin_id: 0,
+		kouhi_1_id: 0,
+		kouhi_2_id: 0,
+		kouhi_3_id: 0
+	};
+};
+
 
 var mockTextIndex = 1;
 

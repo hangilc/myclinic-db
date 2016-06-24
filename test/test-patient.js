@@ -27,18 +27,7 @@ describe("Testing patient", function(){
 		setup.release(conn, done);
 	});
 
-	function mockPatient(){
-		return {
-			last_name: "診療",
-			first_name: "太郎",
-			last_name_yomi: "しんりょう",
-			first_name_yomi: "たろう",
-			birth_day: "1957-06-02",
-			sex: "M",
-			phone: "03-1234-5678",
-			address: "no where"
-		};
-	}
+	var mockPatient = util.mockPatient;
 
 	function alterPatient(patient){
 		patient.last_name += "modified";

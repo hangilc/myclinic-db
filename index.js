@@ -1,5 +1,8 @@
 function extend(dst, src){
 	for(var key in src){
+		if( key in dst ){
+			throw new Error("already defined: " + key);
+		}
 		dst[key] = src[key];
 	}
 }
@@ -24,4 +27,5 @@ extend(db, require("./lib/shinryou-master"));
 extend(db, require("./lib/kizai-master"));
 extend(db, require("./lib/charge"));
 extend(db, require("./lib/wqueue"));
+extend(db, require("./lib/recent-visits"));
 module.exports = db;

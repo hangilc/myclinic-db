@@ -20,4 +20,5 @@ extend(db, require("./lib/conduct-shinryou"));
 extend(db, require("./lib/conduct-drug"));
 extend(db, require("./lib/conduct-kizai"));
 extend(db, require("./lib/iyakuhin-master"));
+extend(db, require("./lib/shinryou-master"));
 module.exports = db;

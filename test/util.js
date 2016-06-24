@@ -340,3 +340,29 @@ exports.mockIyakuhinMaster = function(){
 exports.deleteUnusedIyakuhinMasterColumn = function(data){
 	delete data.yakkacode;
 }
+
+var mockShinryouMasterIndex = 1;
+
+exports.mockShinryouMaster = function(){
+	return {
+		shinryoucode: 111000110,
+		name: "初診",
+		tensuu: "282.00",
+		tensuu_shikibetsu: "3",
+		shuukeisaki: "110",
+		houkatsukensa: "00",
+		oushinkubun: "0",
+		kensagroup: "00",
+		roujintekiyou: "0",
+		code_shou: "1",
+		code_bu: "01",
+		code_alpha: "A",
+		code_kubun: "000",
+		valid_from: "2016-04-01",
+		valid_upto: "0000-00-00",
+	};
+};
+
+exports.deleteUnusedShinryouMasterColumn = function(data){
+	
+}

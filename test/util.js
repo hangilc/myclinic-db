@@ -385,3 +385,21 @@ exports.deleteUnusedKizaiMasterColumn = function(data){
 	
 }
 
+var mockChargeIndex = 1;
+
+exports.mockCharge = function(){
+	return {
+		visit_id: 1000 + mockChargeIndex++,
+		charge: 1280
+	};
+};
+
+exports.deleteUnusedChargeColumn = function(data){
+	delete data.jindouteki_mishuu;
+	delete data.inchou_kessai;
+}
+
+exports.alterCharge = function(data){
+	data.charge += 10;
+}
+

@@ -42,5 +42,18 @@ exports.para = function(funs, done){
 	}
 };
 
-
+function doWhile(test, fun, done){
+	if( test() ){
+		fun(function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			doWhile(test, fun, done);
+		})
+	} else {
+		done();
+	}
+};
+exports.doWhile = doWhile;
 

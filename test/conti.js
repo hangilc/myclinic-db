@@ -1,6 +1,6 @@
 "use strict";
 
-exports.seq = function(funs, done){
+exports.exec = function(funs, done){
 	iter(0);
 
 	function iter(i){
@@ -18,42 +18,33 @@ exports.seq = function(funs, done){
 	}
 };
 
-exports.para = function(funs, done){
-	var hasError = false;
-	var remain = funs.length;
+exports.range = function(begin, end, fn){
+	return function(done){
+		iter(begin);
 
-	for(var i=0;i<funs.length;i++){
-		funs[i](cb);
-	}
-
-	function cb(err){
-		if( hasError ){
-			return;
-		}
-		if( err ){
-			hasError = true;
-			done(err);
-			return;
-		}
-		remain -= 1;
-		if( remain === 0 ){
-			done();
-		}
-	}
-};
-
-function doWhile(test, fun, done){
-	if( test() ){
-		fun(function(err){
-			if( err ){
-				done(err);
+		function iter(i){
+			if( i >= end ){
+				done();
 				return;
 			}
-			doWhile(test, fun, done);
-		})
-	} else {
-		done();
-	}
+			fn(i, function(err){
+				if( err ){
+					done(err);
+					return;
+				}
+				iter(i+1);
+			})
+		}
+	};
 };
-exports.doWhile = doWhile;
+
+exports.forEach = function(arr, fn){
+	return exports.range(0, arr.length, function(i, done){
+		fn(arr[i], done);
+	});
+}
+
+exports.forEachKey = function(obj, fn){
+	return exports.forEach(Object.keys(obj), fn);
+};
 

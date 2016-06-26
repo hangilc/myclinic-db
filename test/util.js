@@ -145,8 +145,19 @@ exports.createClearTableFun = function(tableName){
 	};
 };
 
-exports.mockPatient = function(){
-	return {
+function assignProps(data, props){
+	for(var key in props){
+		if( props.hasOwnProperty(key) ){
+			if( !(key in data) ){
+				throw new Error("invalid property: " + key);
+			}
+			data[key] = props[key];
+		}
+	}
+}
+
+exports.mockPatient = function(props){
+	var data = {
 		last_name: "診療",
 		first_name: "太郎",
 		last_name_yomi: "しんりょう",
@@ -156,6 +167,8 @@ exports.mockPatient = function(){
 		phone: "03-1234-5678",
 		address: "no where"
 	};
+	assignProps(data, props);
+	return data;
 };
 
 exports.mockVisit = function(){

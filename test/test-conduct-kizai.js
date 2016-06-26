@@ -51,7 +51,6 @@ describe("Testing conduct kizai", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedConductKizaiColumn(row);
 				expect(row).eql(conductKizai);
 				done();
 			})
@@ -75,7 +74,6 @@ describe("Testing conduct kizai", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedConductKizaiColumn(row);
 					expect(row).eql(conductKizai);
 					done();
 				})

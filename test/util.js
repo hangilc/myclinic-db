@@ -407,10 +407,6 @@ exports.mockConductKizai = function(){
 	};
 };
 
-exports.deleteUnusedConductKizaiColumn = function(data){
-
-}
-
 exports.alterConductKizai = function(data){
 	data.kizaicode = rotate(data.kizaicode, [700030000, 700080000]);
 	data.amount += 1.0;

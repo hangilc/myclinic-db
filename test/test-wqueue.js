@@ -42,7 +42,6 @@ describe("Testing wqueue", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedWqueueColumn(row);
 				expect(row).eql(wqueue);
 				done();
 			})
@@ -66,7 +65,6 @@ describe("Testing wqueue", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedWqueueColumn(row);
 					expect(row).eql(wqueue);
 					done();
 				})

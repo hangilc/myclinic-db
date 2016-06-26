@@ -477,11 +477,6 @@ exports.mockCharge = function(){
 	};
 };
 
-exports.deleteUnusedChargeColumn = function(data){
-	delete data.jindouteki_mishuu;
-	delete data.inchou_kessai;
-}
-
 exports.alterCharge = function(data){
 	data.charge += 10;
 }
@@ -497,10 +492,6 @@ exports.mockWqueue = function(props){
 	assignProps(data, props);
 	return data;
 };
-
-exports.deleteUnusedWqueueColumn = function(data){
-
-}
 
 exports.alterWqueue = function(data){
 	data.wait_state = rotate(data.wait_state, [0, 1, 2, 3]);

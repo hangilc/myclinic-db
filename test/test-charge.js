@@ -42,7 +42,6 @@ describe("Testing charge", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedChargeColumn(row);
 				expect(row).eql(charge);
 				done();
 			})
@@ -66,7 +65,6 @@ describe("Testing charge", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedChargeColumn(row);
 					expect(row).eql(charge);
 					done();
 				})

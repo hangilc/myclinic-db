@@ -300,11 +300,6 @@ exports.mockKouhi = function(){
 	};
 };
 
-exports.deleteUnusedKouhiColumn = function(kouhi){
-	delete kouhi.active;
-	delete kouhi.category;
-}
-
 exports.alterKouhi = function(hoken){
 	hoken.futansha = (hoken.futansha + 1) % 100000000;
 	hoken.jukyuusha = (hoken.jukyuusha + 1) % 10000000;

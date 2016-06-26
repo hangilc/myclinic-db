@@ -51,7 +51,6 @@ describe("Testing kouhi", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedKouhiColumn(row);
 				expect(row).eql(kouhi);
 				done();
 			})
@@ -75,7 +74,6 @@ describe("Testing kouhi", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedKouhiColumn(row);
 					expect(row).eql(kouhi);
 					done();
 				})

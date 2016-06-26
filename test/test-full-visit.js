@@ -75,7 +75,6 @@ describe("Testing full visit", function(){
 				// visit.shinryou_list = [];
 				// visit.conducts = [];
 				// visit.charge = null;
-				util.deleteUnusedVisitColumn(result);
 				expect(result).eql(visit);
 				done();
 			})

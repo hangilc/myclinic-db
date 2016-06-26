@@ -206,11 +206,6 @@ exports.mockVisit = function(props){
 	return data;
 };
 
-exports.deleteUnusedVisitColumn = function(data){
-	delete data.jihi;
-};
-
-
 var mockTextIndex = 1;
 
 exports.mockText = function(props){

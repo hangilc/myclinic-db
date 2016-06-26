@@ -20,10 +20,6 @@ function alterVisit(visit){
 	}
 }
 
-function deleteUnusedColumn(visit){
-	util.deleteUnusedVisitColumn(visit);
-}
-
 function mockPatient(){
 	return {
 		last_name: "診療",
@@ -140,7 +136,6 @@ describe("Testing visit", function(){
 					done(err);
 					return;
 				}
-				deleteUnusedColumn(row);
 				expect(row).eql(visit);
 				done();
 			})
@@ -164,7 +159,6 @@ describe("Testing visit", function(){
 						done(err);
 						return;
 					}
-					deleteUnusedColumn(row);
 					expect(row).eql(visit);
 					done();
 				})
@@ -193,7 +187,6 @@ describe("Testing visit", function(){
 					done(err);
 					return;
 				}
-				deleteUnusedColumn(row);
 				expect(row).eql(visit);
 				done();
 			})

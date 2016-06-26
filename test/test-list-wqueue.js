@@ -302,5 +302,72 @@ describe("Testing listWqueueForExam", function(){
 				done();
 			})
 		})
+	});
+
+	it("multiple visits for single patient", function(done){
+		var patients = util.range(0, 10).map(function(i){
+			var p = util.mockPatient();
+			p.last_name += i;
+			return p;
+		});
+		var items = [];
+		conti.exec([
+			function(done){
+				insertPatients(conn, patients, done);
+			},
+			function(done){
+				patients.forEach(function(patient, i){
+					var n = 1;
+					if( i === 2 ){
+						n = 2;
+					} else if( i === 6 ){
+						n = 3;
+					}
+					for(var j = 0; j<n; j++){
+						items.push({
+							patient: patient,
+							visit: util.mockVisit({patient_id: patient.patient_id})
+						});
+					}
+				});
+				var visits = items.map(function(item){ return item.visit; });
+				insertVisits(conn, visits, done);
+			},
+			function(done){
+				items.forEach(function(item){
+					item.wqueue = util.mockWqueue({visit_id: item.visit.visit_id, wait_state: wqueueStateWaitExam});
+				});
+				[2, 5].forEach(function(i){
+					items[i].wqueue.wait_state = wqueueStateWaitDrug;
+				});
+				[8].forEach(function(i){
+					items[i].wqueue.wait_state = wqueueStateWaitReExam;
+				});
+				[6].forEach(function(i){
+					items[i].wqueue.wait_state = wqueueStateWaitCashier;
+				});
+				var wqueueList = items.map(function(item){ return item.wqueue; });
+				insertWqueueList(conn, wqueueList, done);
+			}
+		], function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			var ans = items.filter(function(item){ 
+				return item.wqueue.wait_state !== wqueueStateWaitDrug && item.wqueue.wait_state !== wqueueStateWaitCashier; 
+			}).map(function(item){
+				var o = util.assign({}, item.wqueue);
+				return util.assign(o, item.patient);
+			})
+			db.listWqueueForExam(conn, function(err, result){
+				if( err ){
+					done(err);
+					return;
+				}
+				expect(result).eql(ans);
+				done();
+			})
+		})
 	})
 });

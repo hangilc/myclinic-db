@@ -365,10 +365,6 @@ exports.mockGazouLabel = function(){
 	};
 };
 
-exports.deleteUnusedGazouLabelColumn = function(data){
-	
-}
-
 exports.alterGazouLabel = function(data){
 	data.label = rotate(data.label, ["胸部単純Ｘ線", "腹部単純Ｘ線"])
 }

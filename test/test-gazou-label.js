@@ -45,7 +45,6 @@ describe("Testing gazouLabel", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedGazouLabelColumn(row);
 				expect(row).eql(gazouLabel);
 				done();
 			})
@@ -69,7 +68,6 @@ describe("Testing gazouLabel", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedGazouLabelColumn(row);
 					expect(row).eql(gazouLabel);
 					done();
 				})

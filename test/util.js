@@ -378,10 +378,6 @@ exports.mockConductShinryou = function(){
 	};
 };
 
-exports.deleteUnusedConductShinryouColumn = function(data){
-
-}
-
 exports.alterConductShinryou = function(data){
 	data.shinryoucode = rotate(data.shinryoucode, [170001910, 170000410])
 }

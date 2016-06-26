@@ -51,7 +51,6 @@ describe("Testing conduct shinryou", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedConductShinryouColumn(row);
 				expect(row).eql(conductShinryou);
 				done();
 			})
@@ -75,7 +74,6 @@ describe("Testing conduct shinryou", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedConductShinryouColumn(row);
 					expect(row).eql(conductShinryou);
 					done();
 				})

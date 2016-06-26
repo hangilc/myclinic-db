@@ -468,10 +468,6 @@ exports.mockKizaiMaster = function(){
 	};
 };
 
-exports.deleteUnusedKizaiMasterColumn = function(data){
-	
-}
-
 var mockChargeIndex = 1;
 
 exports.mockCharge = function(){

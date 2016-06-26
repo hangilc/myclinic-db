@@ -51,7 +51,6 @@ describe("Testing roujin", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedRoujinColumn(row);
 				expect(row).eql(roujin);
 				done();
 			})
@@ -75,7 +74,6 @@ describe("Testing roujin", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedRoujinColumn(row);
 					expect(row).eql(roujin);
 					done();
 				})

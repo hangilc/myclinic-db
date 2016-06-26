@@ -280,10 +280,6 @@ exports.mockRoujin = function(){
 	};
 };
 
-exports.deleteUnusedRoujinColumn = function(roujin){
-	delete roujin.active;
-}
-
 exports.alterRoujin = function(hoken){
 	hoken.shichouson = (hoken.shichouson + 1) % 100000000;
 	hoken.jukyuusha = (hoken.jukyuusha + 1) % 10000000;

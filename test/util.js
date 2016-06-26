@@ -352,11 +352,6 @@ exports.mockConduct = function(){
 	};
 };
 
-exports.deleteUnusedConductColumn = function(data){
-	delete data.active;
-	delete data.category;
-}
-
 exports.alterConduct = function(data){
 	data.kind = rotate(data.kind, [0, 1, 2, 3]);
 }

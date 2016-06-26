@@ -51,7 +51,6 @@ describe("Testing conduct", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedConductColumn(row);
 				expect(row).eql(conduct);
 				done();
 			})
@@ -75,7 +74,6 @@ describe("Testing conduct", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedConductColumn(row);
 					expect(row).eql(conduct);
 					done();
 				})

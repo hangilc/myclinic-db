@@ -38,6 +38,23 @@ function rotate(current, values){
 	return values[i];
 }
 
+exports.range = function(begin, end){
+	var arr = [];
+	for(var i=begin;i<end;i++){
+		arr.push(i);
+	}
+	return arr;
+};
+
+exports.assign = function(dst, src){
+	for(var key in src){
+		if( src.hasOwnProperty(key) ){
+			dst[key] = src[key];
+		}
+	}
+	return dst;
+};
+
 exports.clearTable = function(conn, tableName, cb){
 	conn.query("delete from " + tableName, cb);
 };
@@ -157,6 +174,7 @@ function assignProps(data, props){
 }
 
 exports.mockPatient = function(props){
+	props = props || {};
 	var data = {
 		last_name: "診療",
 		first_name: "太郎",
@@ -171,8 +189,9 @@ exports.mockPatient = function(props){
 	return data;
 };
 
-exports.mockVisit = function(){
-	return {
+exports.mockVisit = function(props){
+	props = props || {};
+	var data = {
 		patient_id: 199,
 		v_datetime: "2016-06-22 11:51:03",
 		shahokokuho_id: 1234,
@@ -182,6 +201,8 @@ exports.mockVisit = function(){
 		kouhi_2_id: 0,
 		kouhi_3_id: 0
 	};
+	assignProps(data, props);
+	return data;
 };
 
 
@@ -524,11 +545,14 @@ exports.alterCharge = function(data){
 
 var mockWqueueIndex = 1;
 
-exports.mockWqueue = function(){
-	return {
+exports.mockWqueue = function(props){
+	props = props || {};
+	var data = {
 		visit_id: 4321 + mockWqueueIndex++,
 		wait_state: 0
 	};
+	assignProps(data, props);
+	return data;
 };
 
 exports.deleteUnusedWqueueColumn = function(data){

@@ -52,7 +52,6 @@ describe("Testing text", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedTextColumn(row);
 				expect(row).eql(text);
 				done();
 			})
@@ -76,7 +75,6 @@ describe("Testing text", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedTextColumn(row);
 					expect(row).eql(text);
 					done();
 				})
@@ -183,7 +181,6 @@ describe("Testing list texts for visit", function(){
 					done(err);
 					return;
 				}
-				result.forEach(util.deleteUnusedTextColumn);
 				expect(result).eql(ans);
 				done();
 			})

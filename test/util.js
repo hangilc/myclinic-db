@@ -218,10 +218,6 @@ exports.mockText = function(props){
 	return data;
 };
 
-exports.deleteUnusedTextColumn = function(text){
-	delete text.pos;
-};
-
 exports.alterText = function(text){
 	text.content += ":altered" + mockTextIndex++; 
 }

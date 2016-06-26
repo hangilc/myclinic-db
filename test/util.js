@@ -1,5 +1,7 @@
 var setup = require("./setup");
 var moment = require("moment");
+var conti = require("./conti");
+var db = require("../index");
 
 function incDate(sqldate, n){
 	if( n === undefined ) n = 1;
@@ -563,3 +565,18 @@ exports.alterWqueue = function(data){
 	data.wait_state = rotate(data.wait_state, [0, 1, 2, 3]);
 }
 
+exports.batchInsertPatients = function(conn, patients, done){
+	conti.exec([
+		conti.forEach(patients, function(patient, done){
+			db.insertPatient(conn, patient, done);
+		})
+	], done);
+};
+
+exports.batchInsertVisits = function(conn, visits, done){
+	conti.exec([
+		conti.forEach(visits, function(visit, done){
+			db.insertVisit(conn, visit, done);
+		})
+	], done);
+}

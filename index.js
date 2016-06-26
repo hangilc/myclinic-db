@@ -29,4 +29,5 @@ extend(db, require("./lib/charge"));
 extend(db, require("./lib/wqueue"));
 extend(db, require("./lib/recent-visits"));
 extend(db, require("./lib/list-wqueue"));
+extend(db, require("./lib/list-todays-visits"));
 module.exports = db;

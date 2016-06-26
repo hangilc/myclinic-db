@@ -51,7 +51,6 @@ describe("Testing shinryou master", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedShinryouMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})
@@ -71,7 +70,6 @@ describe("Testing shinryou master", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedShinryouMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})
@@ -91,7 +89,6 @@ describe("Testing shinryou master", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedShinryouMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})
@@ -111,7 +108,6 @@ describe("Testing shinryou master", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedShinryouMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})

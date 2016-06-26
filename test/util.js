@@ -237,10 +237,6 @@ exports.mockShahokokuho = function(){
 	};
 };
 
-exports.deleteUnusedShahokokuhoColumn = function(shahokokuho){
-	delete shahokokuho.active;
-}
-
 exports.alterShahokokuho = function(hoken){
 	hoken.hokensha_bangou = hoken.hokensha_bangou === 138156 ? 6137590 : 138156;
 	hoken.hihokensha_kigou += ":changed";
@@ -262,10 +258,6 @@ exports.mockKoukikourei = function(){
 		valid_upto: "2016-07-31"
 	};
 };
-
-exports.deleteUnusedKoukikoureiColumn = function(koukikourei){
-	// nop
-}
 
 exports.alterKoukikourei = function(hoken){
 	hoken.hokensha_bangou = hoken.hokensha_bangou === "39131156" ? "39131123" : "39131156";

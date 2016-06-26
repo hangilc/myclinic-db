@@ -51,7 +51,6 @@ describe("Testing shahokokuho", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedShahokokuhoColumn(row);
 				expect(row).eql(shahokokuho);
 				done();
 			})
@@ -75,7 +74,6 @@ describe("Testing shahokokuho", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedShahokokuhoColumn(row);
 					expect(row).eql(shahokokuho);
 					done();
 				})

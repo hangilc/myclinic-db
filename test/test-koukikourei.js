@@ -51,7 +51,6 @@ describe("Testing koukikourei", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedKoukikoureiColumn(row);
 				expect(row).eql(koukikourei);
 				done();
 			})
@@ -75,7 +74,6 @@ describe("Testing koukikourei", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedKoukikoureiColumn(row);
 					expect(row).eql(koukikourei);
 					done();
 				})

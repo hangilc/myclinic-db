@@ -21,7 +21,7 @@ function alterVisit(visit){
 }
 
 function deleteUnusedColumn(visit){
-	delete visit.jihi;
+	util.deleteUnusedVisitColumn(visit);
 }
 
 function mockPatient(){

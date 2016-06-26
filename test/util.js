@@ -49,11 +49,9 @@ exports.range = function(begin, end){
 };
 
 exports.assign = function(dst, src){
-	for(var key in src){
-		if( src.hasOwnProperty(key) ){
-			dst[key] = src[key];
-		}
-	}
+	Object.keys(src).forEach(function(key){
+		dst[key] = src[key];
+	})
 	return dst;
 };
 
@@ -173,6 +171,7 @@ function assignProps(data, props){
 			data[key] = props[key];
 		}
 	}
+	return data;
 }
 
 exports.mockPatient = function(props){
@@ -205,6 +204,10 @@ exports.mockVisit = function(props){
 	};
 	assignProps(data, props);
 	return data;
+};
+
+exports.deleteUnusedVisitColumn = function(data){
+	delete data.jihi;
 };
 
 
@@ -332,8 +335,8 @@ exports.alterKouhi = function(hoken){
 
 var mockDrugIndex = 1;
 
-exports.mockDrug = function(){
-	return {
+exports.mockDrug = function(props){
+	return assignProps({
 		visit_id: 1000,
 		d_iyakuhincode: 611180001,
 		d_amount: "3",
@@ -341,7 +344,7 @@ exports.mockDrug = function(){
 		d_days: 5,
 		d_category: 0,
 		d_prescribed: 0
-	};
+	}, props || {});
 };
 
 exports.deleteUnusedDrugColumn = function(data){
@@ -467,8 +470,9 @@ exports.alterConductKizai = function(data){
 
 var mockIyakuhinMasterIndex = 1;
 
-exports.mockIyakuhinMaster = function(){
-	return {
+exports.mockIyakuhinMaster = function(props){
+	props = props || {};
+	var data = {
 		iyakuhincode: 620000033 + mockIyakuhinMasterIndex++,
 		name: "カロナール錠３００　３００ｍｇ",
 		yomi: "ｶﾛﾅｰﾙｼﾞｮｳ300",
@@ -480,6 +484,8 @@ exports.mockIyakuhinMaster = function(){
 		valid_from: "2016-04-01",
 		valid_upto: "0000-00-00"
 	};
+	assignProps(data, props);
+	return data;
 };
 
 exports.deleteUnusedIyakuhinMasterColumn = function(data){

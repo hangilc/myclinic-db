@@ -210,11 +210,14 @@ exports.mockVisit = function(props){
 
 var mockTextIndex = 1;
 
-exports.mockText = function(){
-	return {
+exports.mockText = function(props){
+	props = props || {};
+	var data = {
 		visit_id: 1,
 		content: "テスト" + mockTextIndex++
 	};
+	assignProps(data, props);
+	return data;
 };
 
 exports.deleteUnusedTextColumn = function(text){
@@ -577,6 +580,14 @@ exports.batchInsertVisits = function(conn, visits, done){
 	conti.exec([
 		conti.forEach(visits, function(visit, done){
 			db.insertVisit(conn, visit, done);
+		})
+	], done);
+};
+
+exports.batchInsertTexts = function(conn, texts, done){
+	conti.exec([
+		conti.forEach(texts, function(text, done){
+			db.insertText(conn, text, done);
 		})
 	], done);
 }

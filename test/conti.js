@@ -42,7 +42,7 @@ exports.forEach = function(arr, fn){
 	return exports.range(0, arr.length, function(i, done){
 		fn(arr[i], done);
 	});
-}
+};
 
 exports.forEachKey = function(obj, fn){
 	return exports.forEach(Object.keys(obj), fn);

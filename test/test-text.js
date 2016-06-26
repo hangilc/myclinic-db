@@ -2,6 +2,7 @@ var setup = require("./setup");
 var expect = require("chai").expect;
 var util = require("./util");
 var db = require("../index");
+var conti = require("./conti");
 
 var clearTextTable = util.createClearTableFun("visit_text");
 
@@ -118,4 +119,74 @@ describe("Testing text", function(){
 			})
 		})
 	})
-})
+});
+
+describe("Testing list texts for visit", function(){
+
+	var conn;
+
+	beforeEach(clearTextTable);
+	beforeEach(function(done){
+		setup.connect(function(err, conn_){
+			if( err ){
+				done(err);
+				return;
+			}
+			conn = conn_;
+			done();
+		})
+	});
+
+	afterEach(function(done){
+		setup.release(conn, done);
+	});
+	afterEach(clearTextTable);
+
+	it("empty", function(done){
+		db.listTextsForVisit(conn, 1000, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).eql([]);
+			done();
+		})
+	});
+
+	it("simple", function(done){
+		var texts = [
+			{visit_id: 1},
+			{visit_id: 1},
+			{visit_id: 2},
+			{visit_id: 3},
+			{visit_id: 3},
+			{visit_id: 3},
+			{visit_id: 4},
+			{visit_id: 5},
+			{visit_id: 6}
+		];
+		texts = texts.map(util.mockText);
+		conti.exec([
+			function(done){
+				util.batchInsertTexts(conn, texts, done);
+			}
+		], function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			var ans = texts.filter(function(text){
+				return text.visit_id === 3;
+			});
+			db.listTextsForVisit(conn, 3, function(err, result){
+				if( err ){
+					done(err);
+					return;
+				}
+				result.forEach(util.deleteUnusedTextColumn);
+				expect(result).eql(ans);
+				done();
+			})
+		})
+	})
+});

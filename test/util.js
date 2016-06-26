@@ -321,11 +321,6 @@ exports.mockDrug = function(props){
 	}, props || {});
 };
 
-exports.deleteUnusedDrugColumn = function(data){
-	delete data.d_pos;
-	delete data.d_shuukeisaki;
-}
-
 exports.alterDrug = function(data){
 	data.d_iyakuhincode = rotate(data.d_iyakuhincode, [611180001, 616130295, 662230003]);
 	data.d_amount = (+data.d_amount + 1) + "";

@@ -71,7 +71,6 @@ describe("Testing full drug", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedDrugColumn(result);
 				util.deleteUnusedIyakuhinMasterColumn(result);
 				expect(result).eql(ans);
 				done();

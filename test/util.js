@@ -454,10 +454,6 @@ exports.mockShinryouMaster = function(){
 	};
 };
 
-exports.deleteUnusedShinryouMasterColumn = function(data){
-	
-}
-
 var mockKizaiMasterIndex = 1;
 
 exports.mockKizaiMaster = function(){

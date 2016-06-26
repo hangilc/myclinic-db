@@ -51,7 +51,6 @@ describe("Testing iyakuhin master", function(){
 					done(err);
 					return;
 				}
-				console.log(row);
 				expect(row).eql(master);
 				done();
 			})

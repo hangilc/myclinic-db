@@ -52,7 +52,6 @@ describe("Testing iyakuhin master", function(){
 					return;
 				}
 				console.log(row);
-				util.deleteUnusedIyakuhinMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})
@@ -72,7 +71,6 @@ describe("Testing iyakuhin master", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedIyakuhinMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})
@@ -92,7 +90,6 @@ describe("Testing iyakuhin master", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedIyakuhinMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})
@@ -112,7 +109,6 @@ describe("Testing iyakuhin master", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedIyakuhinMasterColumn(row);
 				expect(row).eql(master);
 				done();
 			})

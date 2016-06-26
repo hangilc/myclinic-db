@@ -432,10 +432,6 @@ exports.mockIyakuhinMaster = function(props){
 	return data;
 };
 
-exports.deleteUnusedIyakuhinMasterColumn = function(data){
-	delete data.yakkacode;
-}
-
 var mockShinryouMasterIndex = 1;
 
 exports.mockShinryouMaster = function(){

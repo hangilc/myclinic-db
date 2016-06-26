@@ -392,10 +392,6 @@ exports.mockConductDrug = function(){
 	};
 };
 
-exports.deleteUnusedConductDrugColumn = function(data){
-
-}
-
 exports.alterConductDrug = function(data){
 	data.iyakuhincode = rotate(data.iyakuhincode, [640453081, 643310065]);
 	data.amount += 1.0;

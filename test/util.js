@@ -339,10 +339,6 @@ exports.mockShinryou = function(){
 	};
 };
 
-exports.deleteUnusedShinryouColumn = function(data){
-	// nop
-}
-
 exports.alterShinryou = function(data){
 	data.shinryoucode = rotate(data.shinryoucode, [111003610, 120000710, 120001810]);
 }

@@ -51,7 +51,6 @@ describe("Testing shinryou", function(){
 					done(err);
 					return;
 				}
-				util.deleteUnusedShinryouColumn(row);
 				expect(row).eql(shinryou);
 				done();
 			})
@@ -75,7 +74,6 @@ describe("Testing shinryou", function(){
 						done(err);
 						return;
 					}
-					util.deleteUnusedShinryouColumn(row);
 					expect(row).eql(shinryou);
 					done();
 				})

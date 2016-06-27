@@ -87,6 +87,23 @@ describe("Testing listFullDrugsForVisit", function(){
 	afterEach(initDb);
 
 	it("empty case", function(done){
+		var at = "2016-06-27 15:41:27";
+		var visit = util.mockVisit({v_datetime: at});
+		conti.exec([
+			taskInsertVisit(conn, visit)
+		], function(err){
+			db.listFullDrugsForVisit(conn, visit.visit_id, visit.v_datetime, function(err, result){
+				if( err ){
+					done(err);
+					return;
+				}
+				expect(result).eql([]);
+				done();
+			})
+		});
+	})
+
+	it("simple case", function(done){
 		var valid_from = "2016-04-01";
 		var valid_upto = "2018-03-31";
 		var at = "2016-06-27 15:41:27";

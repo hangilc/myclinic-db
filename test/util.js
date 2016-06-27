@@ -417,9 +417,9 @@ var mockIyakuhinMasterIndex = 1;
 exports.mockIyakuhinMaster = function(props){
 	props = props || {};
 	var data = {
-		iyakuhincode: 620000033 + mockIyakuhinMasterIndex++,
-		name: "カロナール錠３００　３００ｍｇ",
-		yomi: "ｶﾛﾅｰﾙｼﾞｮｳ300",
+		iyakuhincode: 620000033 + mockIyakuhinMasterIndex,
+		name: "カロナール錠３００　３００ｍｇ" + mockIyakuhinMasterIndex,
+		yomi: "ｶﾛﾅｰﾙｼﾞｮｳ300" + mockIyakuhinMasterIndex,
 		unit: "錠",
 		yakka: "8.50",
 		madoku: "0",
@@ -428,6 +428,7 @@ exports.mockIyakuhinMaster = function(props){
 		valid_from: "2016-04-01",
 		valid_upto: "0000-00-00"
 	};
+	mockIyakuhinMasterIndex += 1;
 	assignProps(data, props);
 	return data;
 };

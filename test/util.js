@@ -49,8 +49,11 @@ exports.range = function(begin, end){
 };
 
 exports.assign = function(dst, src){
-	Object.keys(src).forEach(function(key){
-		dst[key] = src[key];
+	var sources = Array.prototype.slice.call(arguments, 1);
+	sources.forEach(function(source){
+		Object.keys(source).forEach(function(key){
+			dst[key] = source[key];
+		})
 	})
 	return dst;
 };

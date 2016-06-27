@@ -71,7 +71,7 @@ describe("Testing full visit", function(){
 				visit.koukikourei = null;
 				visit.roujin = null;
 				visit.kouhi_list = [];
-				// visit.drugs = [];
+				visit.drugs = [];
 				// visit.shinryou_list = [];
 				// visit.conducts = [];
 				// visit.charge = null;

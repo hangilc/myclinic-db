@@ -227,8 +227,8 @@ exports.alterText = function(text){
 
 var mockShahokokuhoIndex = 1;
 
-exports.mockShahokokuho = function(){
-	return {
+exports.mockShahokokuho = function(props){
+	return assignProps({
 		patient_id: 6058,
 		hokensha_bangou: 138156,
 		hihokensha_kigou: "15-3A",
@@ -237,7 +237,7 @@ exports.mockShahokokuho = function(){
 		valid_from: "2016-02-13",
 		valid_upto: "2017-09-30",
 		kourei: 0
-	};
+	}, props || {});
 };
 
 exports.alterShahokokuho = function(hoken){
@@ -251,15 +251,15 @@ exports.alterShahokokuho = function(hoken){
 
 var mockKoukikoureiIndex = 1;
 
-exports.mockKoukikourei = function(){
-	return {
+exports.mockKoukikourei = function(props){
+	return assignProps({
 		patient_id: 3241,
 		hokensha_bangou: "39131156",
 		hihokensha_bangou: "04324066",
 		futan_wari: 1,
 		valid_from: "2015-08-01",
 		valid_upto: "2016-07-31"
-	};
+	}, props || {});
 };
 
 exports.alterKoukikourei = function(hoken){
@@ -272,15 +272,15 @@ exports.alterKoukikourei = function(hoken){
 
 var mockRoujinIndex = 1;
 
-exports.mockRoujin = function(){
-	return {
+exports.mockRoujin = function(props){
+	return assignProps({
 		patient_id: 5843,
 		shichouson: 27138155,
 		jukyuusha: 8767006,
 		futan_wari: 1,
 		valid_from: "2006-08-01",
 		valid_upto: "2008-03-31"
-	};
+	}, props || {});
 };
 
 exports.alterRoujin = function(hoken){
@@ -293,14 +293,14 @@ exports.alterRoujin = function(hoken){
 
 var mockKouhiIndex = 1;
 
-exports.mockKouhi = function(){
-	return {
+exports.mockKouhi = function(props){
+	return assignProps({
 		patient_id: 3294,
 		futansha: 80137151,
 		jukyuusha: 9518832,
 		valid_from: "2015-10-01",
 		valid_upto: "2016-09-30"
-	};
+	}, props || {});
 };
 
 exports.alterKouhi = function(hoken){
@@ -335,11 +335,11 @@ exports.alterDrug = function(data){
 
 var mockShinryouIndex = 1;
 
-exports.mockShinryou = function(){
-	return {
+exports.mockShinryou = function(props){
+	return assignProps({
 		visit_id: 1000 + mockShinryouIndex++,
 		shinryoucode: 111003610
-	};
+	}, props || {});
 };
 
 exports.alterShinryou = function(data){
@@ -348,11 +348,11 @@ exports.alterShinryou = function(data){
 
 var mockConductIndex = 1;
 
-exports.mockConduct = function(){
-	return {
+exports.mockConduct = function(props){
+	return assignProps({
 		visit_id: 3000 + mockConductIndex++,
 		kind: 0
-	};
+	}, props || {});
 };
 
 exports.alterConduct = function(data){
@@ -361,11 +361,11 @@ exports.alterConduct = function(data){
 
 var mockGazouLabelIndex = 1;
 
-exports.mockGazouLabel = function(){
-	return {
+exports.mockGazouLabel = function(props){
+	return assignProps({
 		visit_conduct_id: 200 + mockGazouLabelIndex++,
 		label: "胸部単純Ｘ線"
-	};
+	}, props || {});
 };
 
 exports.alterGazouLabel = function(data){
@@ -374,11 +374,11 @@ exports.alterGazouLabel = function(data){
 
 var mockConductShinryouIndex = 1;
 
-exports.mockConductShinryou = function(){
-	return {
+exports.mockConductShinryou = function(props){
+	return assignp({
 		visit_conduct_id: 300 + mockConductShinryouIndex++,
 		shinryoucode: 170001910
-	};
+	}, props || {});
 };
 
 exports.alterConductShinryou = function(data){
@@ -387,12 +387,12 @@ exports.alterConductShinryou = function(data){
 
 var mockConductDrugIndex = 1;
 
-exports.mockConductDrug = function(){
-	return {
+exports.mockConductDrug = function(props){
+	return assignProps({
 		visit_conduct_id: 400 + mockConductDrugIndex++,
 		iyakuhincode: 640453081,
 		amount: 1.0
-	};
+	}, props || {});
 };
 
 exports.alterConductDrug = function(data){
@@ -402,12 +402,12 @@ exports.alterConductDrug = function(data){
 
 var mockConductKizaiIndex = 1;
 
-exports.mockConductKizai = function(){
-	return {
+exports.mockConductKizai = function(props){
+	return assignProps({
 		visit_conduct_id: 500 + mockConductKizaiIndex++,
 		kizaicode: 700030000,
 		amount: 1.0
-	};
+	}, props || {});
 };
 
 exports.alterConductKizai = function(data){
@@ -436,12 +436,13 @@ exports.mockIyakuhinMaster = function(props){
 	return data;
 };
 
-var mockShinryouMasterIndex = 1;
+var mockShinryouMasterIndex = 0;
 
-exports.mockShinryouMaster = function(){
-	return {
-		shinryoucode: 111000110 + mockShinryouMasterIndex++,
-		name: "初診",
+exports.mockShinryouMaster = function(props){
+	mockShinryouMasterIndex += 1;
+	return assignProps({
+		shinryoucode: 111000110 + mockShinryouMasterIndex,
+		name: "初診" + mockShinryouMasterIndex,
 		tensuu: "282.00",
 		tensuu_shikibetsu: "3",
 		shuukeisaki: "110",
@@ -455,13 +456,13 @@ exports.mockShinryouMaster = function(){
 		code_kubun: "000",
 		valid_from: "2016-04-01",
 		valid_upto: "0000-00-00"
-	};
+	}, props || {});
 };
 
 var mockKizaiMasterIndex = 1;
 
-exports.mockKizaiMaster = function(){
-	return {
+exports.mockKizaiMaster = function(props){
+	return assignProps({
  		kizaicode: 700030000 + mockKizaiMasterIndex++,
 		name: "大角",
 		yomi: "ﾀﾞｲｶｸ",
@@ -469,16 +470,16 @@ exports.mockKizaiMaster = function(){
 		kingaku: "116.00",
 		valid_from: "2016-04-01",
 		valid_upto: "0000-00-00"
-	};
+	}, props || {});
 };
 
 var mockChargeIndex = 1;
 
-exports.mockCharge = function(){
-	return {
+exports.mockCharge = function(props){
+	return assignProps({
 		visit_id: 1000 + mockChargeIndex++,
 		charge: 1280
-	};
+	}, props || {});
 };
 
 exports.alterCharge = function(data){

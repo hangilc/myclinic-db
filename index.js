@@ -8,5 +8,6 @@ function extend(dst, src){
 }
 
 var db = require("./db");
+extend(db, require("./lib/full-conduct"));
 extend(db, require("./lib/full-visit"));
 module.exports = db;

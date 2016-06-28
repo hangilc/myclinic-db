@@ -58,6 +58,12 @@ exports.assign = function(dst, src){
 	return dst;
 };
 
+exports.pluck = function(objList, key){
+	return objList.map(function(obj){
+		return obj[key];
+	});
+};
+
 exports.clearTable = function(conn, tableName, cb){
 	conn.query("delete from " + tableName, cb);
 };

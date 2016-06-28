@@ -1,3 +1,5 @@
+"use strict";
+
 var setup = require("./setup");
 var util = require("./util");
 var db = require("../index");
@@ -98,8 +100,11 @@ describe("Testing getFullShinryou", function(){
 		})
 	})
 
-	it.skip("test listFullShinryouForVisit", function(done){
+	it("test listFullShinryouForVisit", function(done){
 		var du = new DbUtil(conn);
+		var valid_from = "2016-04-01";
+		var at = "2016-06-26 21:35:21";
+		var valid_upto = "0000-00-00";
 		var visit = util.mockVisit({v_datetime: at});
 		var masters = util.range(0, 3).map(function(i){
 			return util.mockShinryouMaster({
@@ -107,15 +112,18 @@ describe("Testing getFullShinryou", function(){
 				valid_upto: valid_upto
 			});
 		});
-		var fullShinryouList = masters.map(function(master){
-			return {
-				shinryou: util.mockShinryou({
-					visit_id: visit.visit_id,
-					shinryoucode: master.shinryoucode
-				}),
-				master: master
-			}
-		});
+		var fullShinryouList;
+		function makeFull(){
+			return masters.map(function(master){
+				return {
+					shinryou: util.mockShinryou({
+						visit_id: visit.visit_id,
+						shinryoucode: master.shinryoucode
+					}),
+					master: master
+				}
+			});
+		}
 		conti.exec([
 			function(done){
 				du.in_v(conn, [visit], done);
@@ -124,9 +132,10 @@ describe("Testing getFullShinryou", function(){
 				du.in_sm(conn, masters, done);
 			},
 			function(done){
+				fullShinryouList = makeFull();
 				var list = fullShinryouList.map(function(item){
 					return item.shinryou;
-				});
+				})
 				du.in_s(conn, list, done);
 			}
 		], function(err){
@@ -137,7 +146,14 @@ describe("Testing getFullShinryou", function(){
 			var ans = fullShinryouList.map(function(item){
 				return util.assign({}, item.shinryou, item.master);
 			});
-			//db.getFullShinryou(conn, )
+			db.listFullShinryouForVisit(conn, visit.visit_id, visit.v_datetime, function(err, result){
+				if( err ){
+					done(err);
+					return;
+				}
+				expect(result).eql(ans);
+				done();
+			})
 		})
 	});
 })

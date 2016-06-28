@@ -375,7 +375,7 @@ exports.alterGazouLabel = function(data){
 var mockConductShinryouIndex = 1;
 
 exports.mockConductShinryou = function(props){
-	return assignp({
+	return assignProps({
 		visit_conduct_id: 300 + mockConductShinryouIndex++,
 		shinryoucode: 170001910
 	}, props || {});

@@ -6,6 +6,7 @@ var expect = require("chai").expect;
 var DbUtil = require("./db-util");
 var util = require("./util");
 var conti = require("../lib/conti");
+var m = require("./model");
 
 function initDb(done){
 	util.withConnect(function(conn, done){
@@ -66,11 +67,50 @@ describe("Testing full conduct", function(){
 					return;
 				}
 				var ans = util.assign({}, conduct, {
-					gazou_label: null,
+					gazou_label: "",
 					drugs: [],
 					shinryou_list: [],
 					kizai_list: []
 				})
+				expect(result).eql(ans);
+				done();
+			})
+		})
+	});
+
+	it("simple", function(done){
+		var conduct = m.conduct();
+		var valid_from = "2016-04-01";
+		var at = "2016-06-26 21:35:21";
+		var valid_upto = "0000-00-00";
+		var i, drug, iMaster, shinryou, sMaster, kizai, kMaster;
+		conduct.setGazouLabel(m.gazouLabel({label: "胸部単純"}));
+		for(i=0;i<3;i++){
+			iMaster = m.iyakuhinMaster({valid_from: valid_from, valid_upto: valid_upto});
+			drug = m.conductDrug().setMaster(iMaster);
+			conduct.addDrug(drug);
+		}
+		for(i=0;i<3;i++){
+			sMaster = m.shinryouMaster({valid_from: valid_from, valid_upto: valid_upto});
+			shinryou = m.conductShinryou().setMaster(sMaster);
+			conduct.addShinryou(shinryou);
+		}
+		for(i=0;i<3;i++){
+			kMaster = m.kizaiMaster({valid_from: valid_from, valid_upto: valid_upto});
+			kizai = m.conductKizai().setMaster(kMaster);
+			conduct.addKizai(kizai);
+		}
+		conduct.save(conn, function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			db.getFullConduct(conn, conduct.data.id, at, function(err, result){
+				if( err ){
+					done(err);
+					return;
+				}
+				expect(result).eql(conduct.getFullData());
 				done();
 			})
 		})

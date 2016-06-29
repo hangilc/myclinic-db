@@ -4,6 +4,32 @@ var util = require("./util");
 var db = require("../index");
 var conti = require("../lib/conti");
 
+// IyakuhinMaster ////////////////////////////////////////////////////
+
+function IyakuhinMaster(props){
+	this.data = util.mockIyakuhinMaster(props);
+	this.saved = false;
+}
+
+IyakuhinMaster.prototype.save = function(conn, done){
+	if( this.saved ){
+		done();
+	} else {
+		db.insertIyakuhinMaster(conn, this.data, function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			this.saved = true;
+			done();
+		}.bind(this));
+	}
+}
+
+exports.iyakuhinMaster = function(props){
+	return new IyakuhinMaster(props);
+}
+
 // ShinryouMaster ////////////////////////////////////////////////////
 
 function ShinryouMaster(props){
@@ -54,6 +80,85 @@ KizaiMaster.prototype.save = function(conn, done){
 
 exports.kizaiMaster = function(props){
 	return new KizaiMaster(props);
+}
+
+// GazouLabel //////////////////////////////////////////////////////////////
+
+function GazouLabel(props){
+	this.data = util.mockGazouLabel(props);
+	this.saved = false;
+}
+
+GazouLabel.prototype.save = function(conn, done){
+	if( this.saved ){
+		setImmediate(function(){
+			done();
+		});
+		return;
+	}
+	var self = this;
+	db.insertGazouLabel(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+};
+
+exports.gazouLabel = function(props){
+	return new GazouLabel(props);
+}
+
+// ConductDrug /////////////////////////////////////////////////////////////
+
+function ConductDrug(props){
+	this.data = util.mockConductDrug(props);
+	this.saved = false;
+}
+
+ConductDrug.prototype.setMaster = function(master){
+	this.data.iyakuhincode = master.data.iyakuhincode;
+	this.master = master;
+	return this;
+};
+
+ConductDrug.prototype.save = function(conn, done){
+	if( this.saved ){
+		done();
+		return;
+	}
+	conti.exec([
+		function(done){
+			if( this.master ){
+				this.master.save(conn, done);
+			} else {
+				done();
+			}
+		}.bind(this),
+		function(done){
+			db.insertConductDrug(conn, this.data, function(err){
+				if( err ){
+					done(err);
+					return;
+				}
+				this.saved = true;
+				done();
+			}.bind(this))
+		}.bind(this)
+	], done);
+};
+
+ConductDrug.prototype.getFullData = function(){
+	if( !this.master ){
+		throw new Error("master is not set");
+	}
+	return util.assign({}, this.data, this.master.data);
+}
+
+exports.conductDrug = function(props){
+	return new ConductDrug(props);
 }
 
 // ConductShinryou /////////////////////////////////////////////////////////
@@ -160,18 +265,28 @@ exports.conductKizai = function(props){
 
 function Conduct(props){
 	this.data = util.mockConduct(props);
-	this.shinryou_list = [];
-	this.kizai_list = [];
+	this.gazouLabel = null;
+	this.drugs = [];
+	this.shinryouList = [];
+	this.kizaiList = [];
 	this.saved = false;
 }
 
+Conduct.prototype.setGazouLabel = function(gazouLabel){
+	this.gazouLabel = gazouLabel;
+};
+
+Conduct.prototype.addDrug = function(drug){
+	this.drugs.push(drug);
+};
+
 Conduct.prototype.addShinryou = function(shinryou){
-	this.shinryou_list.push(shinryou);
+	this.shinryouList.push(shinryou);
 };
 
 Conduct.prototype.addKizai = function(kizai){
-	this.kizai_list.push(kizai);
-}
+	this.kizaiList.push(kizai);
+};
 
 Conduct.prototype.save = function(conn, done){
 	if( this.saved ){
@@ -191,35 +306,67 @@ Conduct.prototype.save = function(conn, done){
 			});
 		},
 		function(done){
-			self.shinryou_list.forEach(function(shinryou){
+			if( self.gazouLabel ){
+				self.gazouLabel.data.visit_conduct_id = self.data.id;
+				self.gazouLabel.save(conn, done);
+			} else {
+				setImmediate(done);
+			}
+		},
+		function(done){
+			self.drugs.forEach(function(drug){
+				drug.data.visit_conduct_id = self.data.id;
+			});
+			conti.forEach(self.drugs, function(drug, done){
+				drug.save(conn, done);
+			}, done);
+		},
+		function(done){
+			self.shinryouList.forEach(function(shinryou){
 				shinryou.data.visit_conduct_id = self.data.id;
 			});
-			conti.forEach(self.shinryou_list, function(shinryou, done){
+			conti.forEach(self.shinryouList, function(shinryou, done){
 				shinryou.save(conn, done);
 			}, done);
 		},
 		function(done){
-			self.kizai_list.forEach(function(kizai){
+			self.kizaiList.forEach(function(kizai){
 				kizai.data.visit_conduct_id = self.data.id;
 			});
-			conti.forEach(self.kizai_list, function(kizai, done){
+			conti.forEach(self.kizaiList, function(kizai, done){
 				kizai.save(conn, done);
 			}, done);
 		}
 	], done);
 };
 
+Conduct.prototype.listFullDrugs = function(){
+	return this.drugs.map(function(drug){
+		return drug.getFullData();
+	});
+}
+
 Conduct.prototype.listFullShinryou = function(){
-	return this.shinryou_list.map(function(shinryou){
+	return this.shinryouList.map(function(shinryou){
 		return shinryou.getFullData();
 	});
 };
 
 Conduct.prototype.listFullKizai = function(){
-	return this.kizai_list.map(function(kizai){
+	return this.kizaiList.map(function(kizai){
 		return kizai.getFullData();
 	});
 };
+
+Conduct.prototype.getFullData = function(){
+	var self = this;
+	return util.assign({}, self.data, {
+		gazou_label: self.gazouLabel ? self.gazouLabel.data.label : "",
+		drugs: self.listFullDrugs(),
+		shinryou_list: self.listFullShinryou(),
+		kizai_list: self.listFullKizai()
+	});
+}
 
 exports.conduct = function(props){
 	return new Conduct(props);

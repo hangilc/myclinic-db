@@ -37,8 +37,20 @@ describe("Testing conduct shinryou", function(){
 			expect(conductShinryouId).above(0);
 			expect(conductShinryou.id).equal(conductShinryouId);
 			done();
-		})
+		});
 	});
+
+	it("insert with null shinryoucode", function(done){
+		var conductShinryou = util.mockConductShinryou({shinryoucode: null});
+		db.insertConductShinryou(conn, conductShinryou, function(err, conductShinryouId){
+			if( err ){
+				done(err);
+				return;
+			}
+			done();
+		});		
+	});
+
 	it("get", function(done){
 		var conductShinryou = util.mockConductShinryou();
 		db.insertConductShinryou(conn, conductShinryou, function(err, conductShinryouId){

@@ -80,12 +80,18 @@ describe("Testing list full conduct drugs", function(){
 				du.in_cd(drugs, done);
 			}
 		], function(err){
-			expect(err == null);
+			if( err ){
+				done(err);
+				return;
+			}
 			var ans = fullDrugs.map(function(item){
 				return util.assign({}, item.drug, item.master);
 			});
 			db.listFullDrugsForConduct(conn, conduct.id, at, function(err, result){
-				expect(err == null);
+				if( err ){
+					done(err);
+					return;
+				}
 				expect(result).eql(ans);
 				done();
 			})

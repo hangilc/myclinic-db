@@ -43,10 +43,7 @@ describe("Testing conduct shinryou", function(){
 	it("insert with null shinryoucode", function(done){
 		var conductShinryou = util.mockConductShinryou({shinryoucode: null});
 		db.insertConductShinryou(conn, conductShinryou, function(err, conductShinryouId){
-			if( err ){
-				done(err);
-				return;
-			}
+			expect(err).ok;
 			done();
 		});		
 	});

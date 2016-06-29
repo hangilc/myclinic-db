@@ -67,9 +67,9 @@ describe("Testing full conduct", function(){
 				}
 				var ans = util.assign({}, conduct, {
 					gazou_label: null,
-					drugs: []
+					drugs: [],
+					shinryou_list: []
 				})
-				console.log(result);
 				done();
 			})
 		})

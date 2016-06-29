@@ -40,7 +40,7 @@ function simpleTest(conn, total, offset, n, done){
 	})
 }
 
-describe("Testing new test", function(){
+describe("Testing list visits", function(){
 	var conn;
 
 	beforeEach(initDb);

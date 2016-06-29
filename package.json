@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "init-test-database": "mysql -u %MYCLINIC_DB_TEST_USER% -p%MYCLINIC_DB_TEST_PASS% myclinic_test <schema.sql"
+    "init-test-database": "mysql -u %MYCLINIC_DB_TEST_USER% -p%MYCLINIC_DB_TEST_PASS% myclinic_test <schema.sql",
+    "mocha": "mocha",
+    "add-test": "node scripts/add-test.js"
   },
   "author": "Hagil Chang",
   "license": "MIT",
@@ -14,6 +16,9 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "inquirer": "^1.1.0",
     "kanjidate": "^1.1.0",
     "mocha": "^2.5.3",
     "moment": "^2.13.0"

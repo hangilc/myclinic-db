@@ -371,3 +371,11 @@ Conduct.prototype.getFullData = function(){
 exports.conduct = function(props){
 	return new Conduct(props);
 }
+
+// batchSave ///////////////////////////////////////////////////////////////
+
+exports.batchSave = function(conn, models, done){
+	conti.forEach(models, function(model, done){
+		model.save(conn, done);
+	}, done);
+}

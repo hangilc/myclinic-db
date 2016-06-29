@@ -72,9 +72,9 @@ describe("Testing full visit", function(){
 				visit.roujin = null;
 				visit.kouhi_list = [];
 				visit.drugs = [];
-				 visit.shinryou_list = [];
-				// visit.conducts = [];
-				// visit.charge = null;
+				visit.shinryou_list = [];
+				visit.conducts = [];
+				visit.charge = null;
 				expect(result).eql(visit);
 				done();
 			})

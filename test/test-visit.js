@@ -125,7 +125,16 @@ describe("Testing visit", function(){
 		})
 	});
 	it("get", function(done){
-		var visit = mockVisit();
+		var visit = mockVisit({
+			patient_id: 1,
+			v_datetime: "2016-06-26 21:35:21",
+			shahokokuho_id: 2,
+			koukikourei_id: 3,
+			roujin_id: 4,
+			kouhi_1_id: 5,
+			kouhi_2_id: 6,
+			kouhi_3_id: 7
+		});
 		db.insertVisit(conn, visit, function(err, visitId){
 			if( err ){
 				done(err);

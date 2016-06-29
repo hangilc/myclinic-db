@@ -136,6 +136,87 @@ exports.shahokokuho = function(props){
 	return new Shahokokuho(props);
 }
 
+// Koukikourei /////////////////////////////////////////////////////////////
+
+function Koukikourei(props){
+	this.data = util.mockKoukikourei(props);
+	this.saved = false;
+}
+
+Koukikourei.prototype.save = function(conn, done){
+	if( this.saved ){
+		setImmediate(done);
+		return;
+	}
+	var self = this;
+	db.insertKoukikourei(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+}
+
+exports.koukikourei = function(props){
+	return new Koukikourei(props);
+}
+
+// Roujin /////////////////////////////////////////////////////////////
+
+function Roujin(props){
+	this.data = util.mockRoujin(props);
+	this.saved = false;
+}
+
+Roujin.prototype.save = function(conn, done){
+	if( this.saved ){
+		setImmediate(done);
+		return;
+	}
+	var self = this;
+	db.insertRoujin(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+}
+
+exports.roujin = function(props){
+	return new Roujin(props);
+}
+
+// Kouhi /////////////////////////////////////////////////////////////
+
+function Kouhi(props){
+	this.data = util.mockKouhi(props);
+	this.saved = false;
+}
+
+Kouhi.prototype.save = function(conn, done){
+	if( this.saved ){
+		setImmediate(done);
+		return;
+	}
+	var self = this;
+	db.insertKouhi(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+}
+
+exports.kouhi = function(props){
+	return new Kouhi(props);
+}
+
 // GazouLabel //////////////////////////////////////////////////////////////
 
 function GazouLabel(props){
@@ -435,7 +516,9 @@ function Visit(props){
 		shahokokuho_id: 0, 
 		koukikourei_id: 0, 
 		roujin_id: 0, 
-		kouhi_1_id: 0, kouhi_2_id: 0, kouhi_3_id: 0
+		kouhi_1_id: 0, 
+		kouhi_2_id: 0, 
+		kouhi_3_id: 0
 	}, props);
 	this.data = util.mockVisit(props);
 	this.saved = false;
@@ -458,6 +541,22 @@ Visit.prototype.setShahokokuho = function(shahokokuho){
 	this.shahokokuho = shahokokuho;
 };
 
+Visit.prototype.setKoukikourei = function(koukikourei){
+	this.koukikourei = koukikourei;
+};
+
+Visit.prototype.setRoujin = function(roujin){
+	this.roujin = roujin;
+};
+
+Visit.prototype.addKouhi = function(kouhi){
+	if( this.kouhiList.length < 3 ){
+		this.kouhiList.push(kouhi);
+	} else {
+		console.warn("more than 3 kouhi (neglected)");
+	}
+}
+
 Visit.prototype.save = function(conn, done){
 	var self = this;
 	conti.exec([
@@ -469,6 +568,57 @@ Visit.prototype.save = function(conn, done){
 						return;
 					}
 					self.data.shahokokuho_id = self.shahokokuho.data.shahokokuho_id;
+					done();
+				})
+			} else {
+				setImmediate(done);
+			}
+		},
+		function(done){
+			if( self.koukikourei ){
+				self.koukikourei.save(conn, function(err){
+					if( err ){
+						done(err);
+						return;
+					}
+					self.data.koukikourei_id = self.koukikourei.data.koukikourei_id;
+					done();
+				})
+			} else {
+				setImmediate(done);
+			}
+		},
+		function(done){
+			conti.forEach(self.kouhiList, function(kouhi, done){
+				kouhi.save(conn, done);
+			}, function(err){
+				if( err ){
+					done(err);
+					return;
+				}
+				self.data.kouhi_1_id = 0;
+				self.data.kouhi_2_id = 0;
+				self.data.kouhi_3_id = 0;
+				if( self.kouhiList.length >= 1 ){
+					self.data.kouhi_1_id = self.kouhiList[0].data.kouhi_id;
+				}
+				if( self.kouhiList.length >= 2 ){
+					self.data.kouhi_2_id = self.kouhiList[1].data.kouhi_id;
+				}
+				if( self.kouhiList.length >= 3 ){
+					self.data.kouhi_3_id = self.kouhiList[2].data.kouhi_id;
+				}
+				done();
+			});
+		},
+		function(done){
+			if( self.roujin ){
+				self.roujin.save(conn, function(err){
+					if( err ){
+						done(err);
+						return;
+					}
+					self.data.roujin_id = self.roujin.data.roujin_id;
 					done();
 				})
 			} else {

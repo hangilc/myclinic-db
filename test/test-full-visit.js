@@ -96,13 +96,13 @@ describe("Testing full visit", function(){
 		var visit = m.visit({
 			patient_id: patientId,
 			v_datetime: at, 
-			shahokokuho_id: 0, 
-			koukikourei_id: 0, 
-			roujin_id: 0, 
-			kouhi_1_id: 0, kouhi_2_id: 0, kouhi_3_id: 0
 		});
 		visit.addText(m.text());
-		visit.setShahokokuho(m.shahokokuho({patient_id: patientId, valid_from: valid_from, valid_upto: valid_upto}))
+		visit.setShahokokuho(m.shahokokuho({patient_id: patientId, valid_from: valid_from, valid_upto: valid_upto}));
+		visit.setKoukikourei(m.koukikourei({patient_id: patientId, valid_from: valid_from, valid_upto: valid_upto}));
+		visit.setRoujin(m.roujin({patient_id: patientId, valid_from: valid_from, valid_upto: valid_upto}));
+		visit.addKouhi(m.kouhi({patient_id: patientId, valid_from: valid_from, valid_upto: valid_upto}));
+		visit.addKouhi(m.kouhi({patient_id: patientId, valid_from: valid_from, valid_upto: valid_upto}));
 		visit.save(conn, function(err){
 			if( err ){
 				done(err);

@@ -48,6 +48,22 @@ exports.range = function(begin, end){
 	return arr;
 };
 
+exports.iter = function(n, fn){
+	var i;
+	for(i=0;i<n;i++){
+		fn();
+	}
+}
+
+exports.iterMap = function(n, fn){
+	var result = [];
+	var i;
+	for(i=0;i<n;i++){
+		result.push(fn(i));
+	}
+	return result;
+}
+
 exports.assign = function(dst, src){
 	var sources = Array.prototype.slice.call(arguments, 1);
 	sources.forEach(function(source){

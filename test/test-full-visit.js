@@ -9,12 +9,34 @@ var m = require("./model");
 
 function resetTables(conn, done){
 	util.initTables(conn, 
-		["iyakuhin_master_arch", "shinryoukoui_master_arch", "tokuteikizai_master_arch"], 
+		["iyakuhin_master_arch", "shinryoukoui_master_arch", "tokuteikizai_master_arch", "visit_gazou_label"], 
 		["visit", "visit_text", "visit_shinryou", "visit_drug", "visit_conduct",
 		 "visit_conduct_drug", "visit_conduct_shinryou", "visit_conduct_kizai",
 		 "visit_charge", "hoken_shahokokuho", "hoken_koukikourei", "hoken_roujin",
 		 "kouhi"], 
 		done);
+}
+
+function mkConduct(valid_from, valid_upto){
+	var conduct = m.conduct();
+	var i, drug, iMaster, shinryou, sMaster, kizai, kMaster;
+	conduct.setGazouLabel(m.gazouLabel({label: "胸部単純"}));
+	for(i=0;i<3;i++){
+		iMaster = m.iyakuhinMaster({valid_from: valid_from, valid_upto: valid_upto});
+		drug = m.conductDrug().setMaster(iMaster);
+		conduct.addDrug(drug);
+	}
+	for(i=0;i<3;i++){
+		sMaster = m.shinryouMaster({valid_from: valid_from, valid_upto: valid_upto});
+		shinryou = m.conductShinryou().setMaster(sMaster);
+		conduct.addShinryou(shinryou);
+	}
+	for(i=0;i<3;i++){
+		kMaster = m.kizaiMaster({valid_from: valid_from, valid_upto: valid_upto});
+		kizai = m.conductKizai().setMaster(kMaster);
+		conduct.addKizai(kizai);
+	}
+	return conduct;
 }
 
 describe("Testing full visit", function(){
@@ -108,6 +130,10 @@ describe("Testing full visit", function(){
 		visit.addDrug(m.drug().setMaster(m.iyakuhinMaster({valid_from: valid_from, valid_upto: valid_upto})));
 		visit.addDrug(m.drug().setMaster(m.iyakuhinMaster({valid_from: valid_from, valid_upto: valid_upto})));
 		visit.addDrug(m.drug().setMaster(m.iyakuhinMaster({valid_from: valid_from, valid_upto: valid_upto})));
+		visit.addShinryou(m.shinryou().setMaster(m.shinryouMaster({valid_from: valid_from, valid_upto: valid_upto})));
+		visit.addShinryou(m.shinryou().setMaster(m.shinryouMaster({valid_from: valid_from, valid_upto: valid_upto})));
+		visit.addConduct(mkConduct(valid_from, valid_upto));
+		visit.addConduct(mkConduct(valid_from, valid_upto));
 		visit.save(conn, function(err){
 			if( err ){
 				done(err);

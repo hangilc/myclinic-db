@@ -160,6 +160,57 @@ exports.drug = function(props){
 	return new Drug(props);
 };
 
+// Shinryou ////////////////////////////////////////////////////////////////////
+
+function Shinryou(props){
+	this.data = util.mockShinryou(props);
+	this.saved = false;
+}
+
+Shinryou.prototype.setMaster = function(master){
+	this.data.shinryoucode = master.data.shinryoucode;
+	this.master = master;
+	return this;
+}
+
+Shinryou.prototype.save = function(conn, done){
+	if( this.saved ){
+		setImmediate(done);
+		return;
+	}
+	var self = this;
+	conti.exec([
+		function(done){
+			if( self.master && !self.master.saved ){
+				self.master.save(conn, done);
+			} else {
+				setImmediate(done);
+			}
+		},
+		function(done){
+			db.insertShinryou(conn, self.data, function(err){
+				if( err ){
+					done(err);
+					return;
+				}
+				self.saved = true;
+				done();
+			});
+		}
+	], done);
+};
+
+Shinryou.prototype.getFullData = function(){
+	if( !this.master ){
+		throw new Error("shinryou master is not set");
+	}
+	return util.assign({}, this.data, this.master.data);
+};
+
+exports.shinryou = function(props){
+	return new Shinryou(props);
+};
+
 // Shahokokuho /////////////////////////////////////////////////////////////
 
 function Shahokokuho(props){
@@ -492,7 +543,7 @@ Conduct.prototype.save = function(conn, done){
 			});
 		},
 		function(done){
-			if( self.gazouLabel ){
+			if( self.gazouLabel && !self.gazouLabel.saved ){
 				self.gazouLabel.data.visit_conduct_id = self.data.id;
 				self.gazouLabel.save(conn, done);
 			} else {
@@ -500,19 +551,23 @@ Conduct.prototype.save = function(conn, done){
 			}
 		},
 		function(done){
-			self.drugs.forEach(function(drug){
-				drug.data.visit_conduct_id = self.data.id;
-			});
 			conti.forEach(self.drugs, function(drug, done){
-				drug.save(conn, done);
+				if( !drug.saved ){
+					drug.data.visit_conduct_id = self.data.id;
+					drug.save(conn, done);
+				} else {
+					setImmediate(done);
+				}
 			}, done);
 		},
 		function(done){
-			self.shinryouList.forEach(function(shinryou){
-				shinryou.data.visit_conduct_id = self.data.id;
-			});
 			conti.forEach(self.shinryouList, function(shinryou, done){
-				shinryou.save(conn, done);
+				if( !shinryou.saved ){
+					shinryou.data.visit_conduct_id = self.data.id;
+					shinryou.save(conn, done);
+				} else {
+					setImmediate(done);
+				}
 			}, done);
 		},
 		function(done){
@@ -520,7 +575,12 @@ Conduct.prototype.save = function(conn, done){
 				kizai.data.visit_conduct_id = self.data.id;
 			});
 			conti.forEach(self.kizaiList, function(kizai, done){
-				kizai.save(conn, done);
+				if( !kizai.saved ){
+					kizai.data.visit_conduct_id = self.data.id;
+					kizai.save(conn, done);
+				} else {
+					setImmediate(done);
+				}
 			}, done);
 		}
 	], done);
@@ -592,6 +652,10 @@ Visit.prototype.addDrug = function(drug){
 	this.drugs.push(drug);
 };
 
+Visit.prototype.addShinryou = function(shinryou){
+	this.shinryouList.push(shinryou);
+};
+
 Visit.prototype.setShahokokuho = function(shahokokuho){
 	this.shahokokuho = shahokokuho;
 };
@@ -610,7 +674,11 @@ Visit.prototype.addKouhi = function(kouhi){
 	} else {
 		console.warn("more than 3 kouhi (neglected)");
 	}
-}
+};
+
+Visit.prototype.addConduct = function(conduct){
+	this.conducts.push(conduct);
+};
 
 Visit.prototype.save = function(conn, done){
 	var self = this;
@@ -704,6 +772,22 @@ Visit.prototype.save = function(conn, done){
 					drug.data.visit_id = self.data.visit_id;
 				}
 				drug.save(conn, done);
+			}, done);
+		},
+		function(done){
+			conti.forEach(self.shinryouList, function(shinryou, done){
+				if( !shinryou.saved ){
+					shinryou.data.visit_id = self.data.visit_id;
+				}
+				shinryou.save(conn, done);
+			}, done);
+		},
+		function(done){
+			conti.forEach(self.conducts, function(conduct, done){
+				if( !conduct.saved ){
+					conduct.data.visit_id = self.data.visit_id;
+				}
+				conduct.save(conn, done);
 			}, done);
 		}
 	], done);

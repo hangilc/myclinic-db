@@ -109,6 +109,57 @@ exports.text = function(props){
 	return new Text(props);
 }
 
+// Drug ////////////////////////////////////////////////////////////////////
+
+function Drug(props){
+	this.data = util.mockDrug(props);
+	this.saved = false;
+}
+
+Drug.prototype.setMaster = function(master){
+	this.data.d_iyakuhincode = master.data.iyakuhincode;
+	this.master = master;
+	return this;
+}
+
+Drug.prototype.save = function(conn, done){
+	if( this.saved ){
+		setImmediate(done);
+		return;
+	}
+	var self = this;
+	conti.exec([
+		function(done){
+			if( self.master && !self.master.saved ){
+				self.master.save(conn, done);
+			} else {
+				setImmediate(done);
+			}
+		},
+		function(done){
+			db.insertDrug(conn, self.data, function(err){
+				if( err ){
+					done(err);
+					return;
+				}
+				self.saved = true;
+				done();
+			});
+		}
+	], done);
+};
+
+Drug.prototype.getFullData = function(){
+	if( !this.master ){
+		throw new Error("drug master is not set");
+	}
+	return util.assign({}, this.data, this.master.data);
+};
+
+exports.drug = function(props){
+	return new Drug(props);
+};
+
 // Shahokokuho /////////////////////////////////////////////////////////////
 
 function Shahokokuho(props){
@@ -537,6 +588,10 @@ Visit.prototype.addText = function(text){
 	this.texts.push(text);
 };
 
+Visit.prototype.addDrug = function(drug){
+	this.drugs.push(drug);
+};
+
 Visit.prototype.setShahokokuho = function(shahokokuho){
 	this.shahokokuho = shahokokuho;
 };
@@ -638,9 +693,17 @@ Visit.prototype.save = function(conn, done){
 		function(done){
 			conti.forEach(self.texts, function(text, done){
 				if( !text.saved ){
-					text.visit_id = self.data.visit_id;
+					text.data.visit_id = self.data.visit_id;
 				}
 				text.save(conn, done);
+			}, done);
+		},
+		function(done){
+			conti.forEach(self.drugs, function(drug, done){
+				if( !drug.saved ){
+					drug.data.visit_id = self.data.visit_id;
+				}
+				drug.save(conn, done);
 			}, done);
 		}
 	], done);

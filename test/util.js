@@ -220,9 +220,10 @@ var mockTextIndex = 1;
 exports.mockText = function(props){
 	props = props || {};
 	var data = {
-		visit_id: 1,
-		content: "テスト" + mockTextIndex++
+		visit_id: mockTextIndex,
+		content: "テスト" + mockTextIndex
 	};
+	mockTextIndex++;
 	assignProps(data, props);
 	return data;
 };

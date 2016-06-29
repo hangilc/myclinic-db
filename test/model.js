@@ -213,7 +213,13 @@ Conduct.prototype.listFullShinryou = function(){
 	return this.shinryou_list.map(function(shinryou){
 		return shinryou.getFullData();
 	});
-}
+};
+
+Conduct.prototype.listFullKizai = function(){
+	return this.kizai_list.map(function(kizai){
+		return kizai.getFullData();
+	});
+};
 
 exports.conduct = function(props){
 	return new Conduct(props);

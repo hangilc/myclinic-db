@@ -78,10 +78,10 @@ describe("Testing full conduct kizai", function(){
 		var at = "2016-06-26 21:35:21";
 		var valid_upto = "0000-00-00";
 		var conduct = m.conduct();
-		var i, master, shinryou;
+		var i, master, kizai;
 		for(i=0;i<3;i++){
 			master = m.kizaiMaster({valid_from: valid_from, valid_upto: valid_upto});
-			shinryou = m.conductKizai().setMaster(master);
+			kizai = m.conductKizai().setMaster(master);
 			conduct.addKizai(kizai);
 		}
 		conduct.save(conn, function(err){
@@ -89,11 +89,12 @@ describe("Testing full conduct kizai", function(){
 				done(err);
 				return;
 			}
-			db.listFullKizaiForConduct(conn, conduct.id, at, function(err, result){
+			db.listFullKizaiForConduct(conn, conduct.data.id, at, function(err, result){
 				if( err ){
 					done(err);
 					return;
 				}
+				expect(result).eql(conduct.listFullKizai());
 				done();
 			})
 		})

@@ -618,6 +618,33 @@ exports.conduct = function(props){
 	return new Conduct(props);
 }
 
+// Charge //////////////////////////////////////////////////////////////////
+
+function Charge(props){
+	this.data = util.mockCharge(props);
+	this.saved = false;
+}
+
+Charge.prototype.save = function(conn, done){
+	if( this.saved ){
+		setImmediate(done);
+		return;
+	}
+	var self = this;
+	db.insertCharge(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+};
+
+exports.charge = function(props){
+	return new Charge(props);
+};
+
 // Visit ///////////////////////////////////////////////////////////////////
 
 function Visit(props){
@@ -679,6 +706,10 @@ Visit.prototype.addKouhi = function(kouhi){
 Visit.prototype.addConduct = function(conduct){
 	this.conducts.push(conduct);
 };
+
+Visit.prototype.setCharge = function(charge){
+	this.charge = charge;
+}
 
 Visit.prototype.save = function(conn, done){
 	var self = this;
@@ -789,6 +820,14 @@ Visit.prototype.save = function(conn, done){
 				}
 				conduct.save(conn, done);
 			}, done);
+		},
+		function(done){
+			if( self.charge && !self.charge.saved ){
+				self.charge.data.visit_id = self.data.visit_id;
+				self.charge.save(conn, done);
+			} else {
+				setImmediate(done);
+			}
 		}
 	], done);
 }

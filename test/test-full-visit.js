@@ -134,6 +134,7 @@ describe("Testing full visit", function(){
 		visit.addShinryou(m.shinryou().setMaster(m.shinryouMaster({valid_from: valid_from, valid_upto: valid_upto})));
 		visit.addConduct(mkConduct(valid_from, valid_upto));
 		visit.addConduct(mkConduct(valid_from, valid_upto));
+		visit.setCharge(m.charge({charge: 1000}));
 		visit.save(conn, function(err){
 			if( err ){
 				done(err);
@@ -144,7 +145,6 @@ describe("Testing full visit", function(){
 					done(err);
 					return;
 				}
-				console.log(result);
 				expect(result).eql(visit.getFullData());
 				done();
 			})

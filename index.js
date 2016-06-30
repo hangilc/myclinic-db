@@ -10,4 +10,6 @@ function extend(dst, src){
 var db = require("./db");
 extend(db, require("./lib/full-conduct"));
 extend(db, require("./lib/full-visit"));
+extend(db, require("./lib/hoken"));
+extend(db, require("./lib/start-visit"));
 module.exports = db;

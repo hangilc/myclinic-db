@@ -7,6 +7,7 @@ var DbUtil = require("./db-util");
 var util = require("./util");
 var conti = require("../lib/conti");
 var m = require("./model");
+var uConst = require("./util-const");
 
 function initDb(done){
 	util.withConnect(function(conn, done){
@@ -15,6 +16,20 @@ function initDb(done){
 			["visit", "wqueue", "hoken_shahokokuho", "hoken_koukikourei", "hoken_roujin", "kouhi"],
 			done);
 	}, done);
+}
+
+var waitExam = uConst.wqueueStateWaitExam;
+
+function nullVisit(){
+	return {
+		patient_id: 0,
+		shahokokuho_id: 0,
+		koukikourei_id: 0,
+		roujin_id: 0,
+		kouhi_1_id: 0,
+		kouhi_2_id: 0,
+		kouhi_3_id: 0
+	};
 }
 
 describe("Testing start visit", function(){
@@ -71,7 +86,7 @@ describe("Testing start visit", function(){
 							return;
 						}
 						expect(result.length).above(0);
-						expect(result[result.length-1]).eql({visit_id: visitId, wait_state: 0});
+						expect(result[result.length-1]).eql({visit_id: visitId, wait_state: waitExam});
 						done();
 					})
 				}
@@ -109,21 +124,193 @@ describe("Testing start visit", function(){
 						return;
 					}
 					expect(result.length).above(0);
-					var ans = {
+					var ans = util.assign({}, nullVisit(), {
 						visit_id: visitId,
 						patient_id: patientId,
 						v_datetime: at,
-						shahokokuho_id: 0,
-						koukikourei_id: 0,
-						roujin_id: 0,
-						kouhi_1_id: 0,
-						kouhi_2_id: 0,
-						kouhi_3_id: 0
-					};
-					ans.shahokokuho_id = shahokokuho.data.shahokokuho_id;
+						shahokokuho_id: shahokokuho.data.shahokokuho_id
+					})
 					expect(result[0]).eql(ans);
 					done();
 				})
+			},
+			function(done){
+				db.listWqueue(conn, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).length.above(0);
+					expect(result[0]).eql({visit_id: visitId, wait_state: waitExam});
+					done();
+				});
+			}
+		], done);
+	});
+
+	it("koukikourei", function(done){
+		var patientId = 3212;
+		var koukikourei = m.koukikourei({
+			patient_id: patientId,
+			valid_from: valid_from,
+			valid_upto: valid_upto
+		});
+		var visitId;
+		conti.exec([
+			function(done){
+				m.batchSave(conn, [koukikourei], done);
+			},
+			function(done){
+				db.startVisit(conn, patientId, at, function(err, visitId_){
+					if( err ){
+						done(err);
+						return;
+					}
+					visitId = visitId_;
+					expect(visitId).above(0);
+					done();
+				})
+			},
+			function(done){
+				db.listVisitsFromRecent(conn, 1, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result.length).above(0);
+					var ans = util.assign({}, nullVisit(), {
+						visit_id: visitId,
+						patient_id: patientId,
+						v_datetime: at,
+						koukikourei_id: koukikourei.data.koukikourei_id
+					})
+					expect(result[0]).eql(ans);
+					done();
+				})
+			},
+			function(done){
+				db.listWqueue(conn, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).length.above(0);
+					expect(result[0]).eql({visit_id: visitId, wait_state: waitExam});
+					done();
+				});
+			}
+		], done);
+	});
+
+	it("roujin", function(done){
+		var patientId = 3213;
+		var roujin = m.roujin({
+			patient_id: patientId,
+			valid_from: valid_from,
+			valid_upto: valid_upto
+		});
+		var visitId;
+		conti.exec([
+			function(done){
+				m.batchSave(conn, [roujin], done);
+			},
+			function(done){
+				db.startVisit(conn, patientId, at, function(err, visitId_){
+					if( err ){
+						done(err);
+						return;
+					}
+					visitId = visitId_;
+					expect(visitId).above(0);
+					done();
+				})
+			},
+			function(done){
+				db.listVisitsFromRecent(conn, 1, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result.length).above(0);
+					var ans = util.assign({}, nullVisit(), {
+						visit_id: visitId,
+						patient_id: patientId,
+						v_datetime: at,
+						roujin_id: roujin.data.roujin_id
+					})
+					expect(result[0]).eql(ans);
+					done();
+				})
+			},
+			function(done){
+				db.listWqueue(conn, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).length.above(0);
+					expect(result[0]).eql({visit_id: visitId, wait_state: waitExam});
+					done();
+				});
+			}
+		], done);
+	});
+
+	it("kouhi", function(done){
+		var patientId = 3214;
+		var kouhiProps = {
+			patient_id: patientId,
+			valid_from: valid_from,
+			valid_upto: valid_upto
+		};
+		var kouhi_1 = m.kouhi(kouhiProps);
+		var kouhi_2 = m.kouhi(kouhiProps);
+		var kouhi_3 = m.kouhi(kouhiProps);
+		var visitId;
+		conti.exec([
+			function(done){
+				m.batchSave(conn, [kouhi_1, kouhi_2, kouhi_3], done);
+			},
+			function(done){
+				db.startVisit(conn, patientId, at, function(err, visitId_){
+					if( err ){
+						done(err);
+						return;
+					}
+					visitId = visitId_;
+					expect(visitId).above(0);
+					done();
+				})
+			},
+			function(done){
+				db.listVisitsFromRecent(conn, 1, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result.length).above(0);
+					var ans = util.assign({}, nullVisit(), {
+						visit_id: visitId,
+						patient_id: patientId,
+						v_datetime: at,
+						kouhi_1_id: kouhi_1.data.kouhi_id,
+						kouhi_2_id: kouhi_2.data.kouhi_id,
+						kouhi_3_id: kouhi_3.data.kouhi_id
+					})
+					expect(result[0]).eql(ans);
+					done();
+				})
+			},
+			function(done){
+				db.listWqueue(conn, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).length.above(0);
+					expect(result[0]).eql({visit_id: visitId, wait_state: waitExam});
+					done();
+				});
 			}
 		], done);
 	});

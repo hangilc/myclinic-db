@@ -7,7 +7,6 @@ var DbUtil = require("./db-util");
 var util = require("./util");
 var conti = require("../lib/conti");
 var m = require("./model");
-var uConst = require("./util-const");
 
 function initDb(done){
 	util.withConnect(function(conn, done){
@@ -18,7 +17,7 @@ function initDb(done){
 	}, done);
 }
 
-var waitExam = uConst.wqueueStateWaitExam;
+var waitExam = util.wqueueStateWaitExam;
 
 function nullVisit(){
 	return {

@@ -5,7 +5,6 @@ var db = require("../index");
 var expect = require("chai").expect;
 var DbUtil = require("./db-util");
 var util = require("./util");
-var uConst = require("./util-const");
 var conti = require("../lib/conti");
 var m = require("./model");
 
@@ -18,7 +17,7 @@ function initDb(done){
 	}, done);
 }
 
-describe("Testing new test", function(){
+describe("Testing pharma queue", function(){
 	var conn;
 
 	beforeEach(initDb);
@@ -63,7 +62,7 @@ describe("Testing new test", function(){
 	});
 
 	it("find (one)", function(done){
-		var q = {visit_id: 2113, pharma_state: uConst.pharmaQueueStateWaitPack};
+		var q = {visit_id: 2113, pharma_state: util.pharmaQueueStateWaitPack};
 		conti.exec([
 			function(done){
 				db.insertPharmaQueue(conn, q, done);
@@ -89,7 +88,7 @@ describe("Testing new test", function(){
 	});
 
 	it("get (one)", function(done){
-		var q = {visit_id: 2113, pharma_state: uConst.pharmaQueueStateWaitPack};
+		var q = {visit_id: 2113, pharma_state: util.pharmaQueueStateWaitPack};
 		conti.exec([
 			function(done){
 				db.insertPharmaQueue(conn, q, done);
@@ -108,8 +107,8 @@ describe("Testing new test", function(){
 	});
 
 	it("update", function(done){
-		var q = m.pharmaQueue({visit_id: 2114, pharma_state: uConst.pharmaQueueStateWaitPack});
-		var qq = util.assign({}, q.data, {pharma_state: uConst.pharmaQueueStateInPack});
+		var q = m.pharmaQueue({visit_id: 2114, pharma_state: util.pharmaQueueStateWaitPack});
+		var qq = util.assign({}, q.data, {pharma_state: util.pharmaQueueStateInPack});
 		conti.exec([
 			function(done){
 				q.save(conn, done);

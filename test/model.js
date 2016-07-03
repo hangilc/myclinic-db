@@ -1,7 +1,6 @@
 "use strict";
 
 var util = require("./util");
-var uConst = require("./util-const");
 var db = require("../index");
 var conti = require("../lib/conti");
 

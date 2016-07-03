@@ -5,7 +5,6 @@ var db = require("../index");
 var expect = require("chai").expect;
 var DbUtil = require("./db-util");
 var util = require("./util");
-var uConst = require("./util-const");
 var conti = require("../lib/conti");
 var m = require("./model");
 
@@ -47,7 +46,7 @@ describe("Testing startExam", function(){
 
 	it("minimal", function(done){
 		var visitId = 1000;
-		var wq = m.wqueue({visit_id: visitId, wait_state: uConst.wqueueStateWaitExam});
+		var wq = m.wqueue({visit_id: visitId, wait_state: util.wqueueStateWaitExam});
 		conti.exec([
 			function(done){
 				m.batchSave(conn, [wq], function(err){
@@ -69,7 +68,7 @@ describe("Testing startExam", function(){
 					}
 					var ans = {
 						visit_id: visitId,
-						wait_state: uConst.wqueueStateInExam
+						wait_state: util.wqueueStateInExam
 					}
 					expect(result).eql(ans);
 					done();
@@ -103,7 +102,7 @@ describe("Testing startExam", function(){
 					}
 					var ans = {
 						visit_id: visitId,
-						wait_state: uConst.wqueueStateInExam
+						wait_state: util.wqueueStateInExam
 					}
 					expect(result).eql(ans);
 					done();
@@ -143,7 +142,7 @@ describe("Testing suspendExam", function(done){
 
 	it("minimal", function(done){
 		var visitId = 1000;
-		var wq = m.wqueue({visit_id: visitId, wait_state: uConst.wqueueStateInExam});
+		var wq = m.wqueue({visit_id: visitId, wait_state: util.wqueueStateInExam});
 		conti.exec([
 			function(done){
 				wq.save(conn, done);
@@ -159,7 +158,7 @@ describe("Testing suspendExam", function(done){
 					}
 					var ans = {
 						visit_id: visitId,
-						wait_state: uConst.wqueueStateWaitReExam
+						wait_state: util.wqueueStateWaitReExam
 					}
 					expect(result).eql(ans);
 					done();
@@ -196,7 +195,7 @@ describe("Testing suspendExam", function(done){
 					}
 					var ans = {
 						visit_id: visitId,
-						wait_state: uConst.wqueueStateWaitReExam
+						wait_state: util.wqueueStateWaitReExam
 					}
 					expect(result).eql(ans);
 					done();

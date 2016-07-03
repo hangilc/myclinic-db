@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha",
     "init-test-database": "mysql -u %MYCLINIC_DB_TEST_USER% -p%MYCLINIC_DB_TEST_PASS% myclinic_test <schema.sql",
+    "reset-tables": "mysql -u %MYCLINIC_DB_TEST_USER% -p%MYCLINIC_DB_TEST_PASS% myclinic_test <reset-tables.sql",
     "mocha": "mocha",
     "add-test": "node scripts/add-test.js"
   },

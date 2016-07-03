@@ -90,7 +90,9 @@ exports.resetTable = function(conn, tableName, cb){
 			cb(err);
 			return;
 		}
-		conn.query("alter table " + tableName + " auto_increment = 1", cb);
+		cb(); // workaround
+		// following query magically fails
+		//conn.query("alter table " + tableName + " auto_increment = 1", cb);
 	})
 };
 
@@ -149,7 +151,9 @@ exports.withConnect = function(fn, done){
 		fn(conn, function(err){
 			if( err ){
 				setup.release(conn, function(err_){
-					console.log("setup.release failed", err_);
+					if( err_ ){
+						console.log("setup.release failed with: " + err_);
+					}
 					done(err);
 				})
 				return;
@@ -161,29 +165,9 @@ exports.withConnect = function(fn, done){
 
 exports.createClearTableFun = function(tableName){
 	return function(done){
-		setup.connect(function(err, conn){
-			if( err ){
-				done(err);
-				return;
-			}
-			conn.query("delete from " + tableName, function(err){
-				if( err ){
-					setup.release(conn, function(){
-						done(err);
-					});
-					return;
-				}
-				conn.query("alter table " + tableName + " auto_increment = 1", function(err){
-					if( err ){
-						setup.release(conn, function(){
-							done(err);
-						});
-						return;
-					}
-					setup.release(conn, done);
-				})
-			})
-		})
+		exports.withConnect(function(conn, done){
+			exports.resetTable(conn, tableName, done);
+		}, done);
 	};
 };
 
@@ -555,3 +539,8 @@ exports.batchInsertTexts = function(conn, texts, done){
 		})
 	], done);
 }
+
+var uConst = require("../lib/util-const");
+Object.keys(uConst).forEach(function(key){
+	exports[key] = uConst[key];
+});

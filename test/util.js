@@ -523,7 +523,14 @@ exports.mockWqueue = function(props){
 
 exports.alterWqueue = function(data){
 	data.wait_state = rotate(data.wait_state, [0, 1, 2, 3]);
-}
+};
+
+exports.mockPharmaQueue = function(props){
+	return assignProps({
+		visit_id: 0,
+		pharma_state: 0
+	}, props || {});
+};
 
 exports.batchInsertPatients = function(conn, patients, done){
 	conti.exec([

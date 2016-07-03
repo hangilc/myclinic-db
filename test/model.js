@@ -860,11 +860,41 @@ function Wqueue(props){
 
 Wqueue.prototype.save = function(conn, done){
 	var self = this;
-	db.insertWqueue(conn, self.data, done);
+	db.insertWqueue(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	});
 };
 
 exports.wqueue = function(props){
 	return new Wqueue(props);
+};
+
+// PharmaQueue /////////////////////////////////////////////////////////////
+
+function PharmaQueue(props){
+	this.data = util.mockPharmaQueue(props);
+	this.saved = false;
+}
+
+PharmaQueue.prototype.save = function(conn, done){
+	var self = this;
+	db.insertPharmaQueue(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+};
+
+exports.pharmaQueue = function(props){
+	return new PharmaQueue(props);
 };
 
 // batchSave ///////////////////////////////////////////////////////////////

@@ -44,7 +44,7 @@ describe("Testing safely delete visit", function(){
 	var valid_upto = "2018-03-31";
 	var valid_upto_no_limit = "0000-00-00";
 
-	it("mock", function(done){
+	it.skip("mock", function(done){
 		db.safelyDeleteVisit(conn, 0, function(err){
 			done(err);
 		})

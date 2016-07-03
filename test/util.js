@@ -92,7 +92,7 @@ exports.resetTable = function(conn, tableName, cb){
 		}
 		cb(); // workaround
 		// following query magically fails
-		//conn.query("alter table " + tableName + " auto_increment = 1", cb);
+		//conn.query("alter table " + tableName + " auto_increment = 1, algorithm=inplace", cb);
 	})
 };
 

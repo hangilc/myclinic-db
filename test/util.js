@@ -81,7 +81,8 @@ exports.pluck = function(objList, key){
 };
 
 exports.clearTable = function(conn, tableName, cb){
-	conn.query("delete from " + tableName, cb);
+	conn.query("truncate table " + tableName, cb);
+	//conn.query("delete from " + tableName, cb);
 };
 
 exports.resetTable = function(conn, tableName, cb){

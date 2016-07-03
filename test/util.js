@@ -85,15 +85,16 @@ exports.clearTable = function(conn, tableName, cb){
 };
 
 exports.resetTable = function(conn, tableName, cb){
-	exports.clearTable(conn, tableName, function(err){
-		if( err ){
-			cb(err);
-			return;
-		}
-		cb(); // workaround
+	conn.query("truncate table " + tableName, cb);
+	// exports.clearTable(conn, tableName, function(err){
+	// 	if( err ){
+	// 		cb(err);
+	// 		return;
+	// 	}
+		//cb(); // workaround
 		// following query magically fails
 		//conn.query("alter table " + tableName + " auto_increment = 1, algorithm=inplace", cb);
-	})
+	// })
 };
 
 exports.clearTables = function(conn, tableNames, cb){

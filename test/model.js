@@ -658,7 +658,7 @@ function Visit(props){
 		kouhi_1_id: 0, 
 		kouhi_2_id: 0, 
 		kouhi_3_id: 0
-	}, props);
+	}, props || {});
 	this.data = util.mockVisit(props);
 	this.saved = false;
 	this.texts = [];

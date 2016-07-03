@@ -2,15 +2,23 @@ var setup = require("./setup");
 var expect = require("chai").expect;
 var util = require("./util");
 var db = require("../index");
+var conti = require("../lib/conti");
+var m = require("./model");
 
-var clearTable = util.createClearTableFun("visit_charge");
+function clearTable(done){
+	util.withConnect(function(conn, done){
+		util.initTables(conn,
+			[],
+			["visit_charge", "visit"],
+			done);
+	}, done);
+}
 
 describe("Testing charge", function(){
-	before(clearTable);
-	after(clearTable);
 
 	var conn;
 
+	beforeEach(clearTable);
 	beforeEach(function(done){
 		setup.connect(function(err, conn_){
 			if( err ){
@@ -25,6 +33,7 @@ describe("Testing charge", function(){
 	afterEach(function(done){
 		setup.release(conn, done);
 	});
+	afterEach(clearTable);
 
 	it("insert", function(done){
 		var charge = util.mockCharge();
@@ -106,5 +115,56 @@ describe("Testing charge", function(){
 				})
 			})
 		})
-	})
+	});
+
+	it("set (insert)", function(done){
+		var chargeValue = 1480;
+		var visitId = 3000;
+		conti.exec([
+			function(done){
+				db.setChargeValue(conn, visitId, chargeValue, done);
+			},
+			function(done){
+				db.getCharge(conn, visitId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = {
+						visit_id: visitId,
+						charge: chargeValue
+					};
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+	});
+
+	it("set (update)", function(done){
+		var chargeValue = 1480;
+		var visitId = 3000;
+		conti.exec([
+			function(done){
+				db.insertCharge(conn, {visit_id: visitId, charge: 0}, done);
+			},
+			function(done){
+				db.setChargeValue(conn, visitId, chargeValue, done);
+			},
+			function(done){
+				db.getCharge(conn, visitId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = {
+						visit_id: visitId,
+						charge: chargeValue
+					};
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+	});
 });

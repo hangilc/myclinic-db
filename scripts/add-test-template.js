@@ -5,6 +5,7 @@ var db = require("../index");
 var expect = require("chai").expect;
 var DbUtil = require("./db-util");
 var util = require("./util");
+var uConst = require("./util-const");
 var conti = require("../lib/conti");
 var m = require("./model");
 

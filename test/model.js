@@ -1,6 +1,7 @@
 "use strict";
 
 var util = require("./util");
+var uConst = require("./util-const");
 var db = require("../index");
 var conti = require("../lib/conti");
 
@@ -849,6 +850,22 @@ Visit.prototype.getFullData = function(){
 exports.visit = function(props){
 	return new Visit(props);
 }
+
+// Wqueue //////////////////////////////////////////////////////////////////
+
+function Wqueue(props){
+	this.data = util.mockWqueue(props);
+	this.saved = false;
+}
+
+Wqueue.prototype.save = function(conn, done){
+	var self = this;
+	db.insertWqueue(conn, self.data, done);
+};
+
+exports.wqueue = function(props){
+	return new Wqueue(props);
+};
 
 // batchSave ///////////////////////////////////////////////////////////////
 

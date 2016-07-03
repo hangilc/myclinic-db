@@ -3,6 +3,7 @@ var expect = require("chai").expect;
 var util = require("./util");
 var db = require("../index");
 var conti = require("./conti");
+var m = require("./model");
 
 var clearTextTable = util.createClearTableFun("visit_text");
 
@@ -186,4 +187,63 @@ describe("Testing list texts for visit", function(){
 			})
 		})
 	})
+});
+
+describe("Testing count texts", function(){
+	var conn;
+
+	beforeEach(clearTextTable);
+	beforeEach(function(done){
+		setup.connect(function(err, conn_){
+			if( err ){
+				done(err);
+				return;
+			}
+			conn = conn_;
+			done();
+		})
+	});
+
+	afterEach(function(done){
+		setup.release(conn, done);
+	});
+	afterEach(clearTextTable);
+
+	it("empty", function(done){
+		db.countTextsForVisit(conn, 0, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).eql(0);
+			done();
+		})
+	});
+
+	it("multiple", function(done){
+		var visitId = 37123;
+		var n = 3;
+		var texts = util.iterMap(n, function(i){
+			var props = {
+				visit_id: visitId,
+				content: "content " + i
+			};
+			return m.text(props);
+		});
+		conti.exec([
+			function(done){
+				m.batchSave(conn, texts, done);
+			},
+			function(done){
+				db.countTextsForVisit(conn, visitId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).equal(n);
+					done();
+				})
+			}
+		], done);
+	});
 });

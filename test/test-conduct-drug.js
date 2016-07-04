@@ -2,6 +2,8 @@ var setup = require("./setup");
 var expect = require("chai").expect;
 var util = require("./util");
 var db = require("../index");
+var m = require("./model");
+var conti = require("../lib/conti");
 
 var clearTable = util.createClearTableFun("visit_conduct_drug");
 
@@ -117,3 +119,61 @@ describe("Testing conduct drug", function(){
 		})
 	})
 });
+
+describe("Testing count conduct drug", function(){
+	before(clearTable);
+	after(clearTable);
+
+	var conn;
+
+	beforeEach(function(done){
+		setup.connect(function(err, conn_){
+			if( err ){
+				done(err);
+				return;
+			}
+			conn = conn_;
+			done();
+		})
+	});
+
+	afterEach(function(done){
+		setup.release(conn, done);
+	});
+
+	it("empty", function(done){
+		db.countConductDrugsForConduct(conn, 0, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).equal(0);
+			done();
+		})
+	});
+
+	it("multiple", function(done){
+		var conductId = 321;
+		var n = 3;
+		var drugs = util.iterMap(n, function(i){
+			return m.conductDrug({
+				visit_conduct_id: conductId
+			});
+		});
+		conti.exec([
+			function(done){
+				m.batchSave(conn, drugs, done);
+			},
+			function(done){
+				db.countConductDrugsForConduct(conn, conductId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).equal(n);
+					done();
+				})
+			}
+		], done);
+	})
+})

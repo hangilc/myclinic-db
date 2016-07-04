@@ -2,6 +2,8 @@ var setup = require("./setup");
 var expect = require("chai").expect;
 var util = require("./util");
 var db = require("../index");
+var conti = require("../lib/conti");
+var m = require("./model");
 
 var clearTable = util.createClearTableFun("visit_conduct_shinryou");
 
@@ -124,5 +126,64 @@ describe("Testing conduct shinryou", function(){
 				})
 			})
 		})
+	})
+});
+
+describe("Testing count conduct shinryou", function(){
+	before(clearTable);
+	after(clearTable);
+
+	var conn;
+
+	beforeEach(function(done){
+		setup.connect(function(err, conn_){
+			if( err ){
+				done(err);
+				return;
+			}
+			conn = conn_;
+			done();
+		})
+	});
+
+	afterEach(function(done){
+		setup.release(conn, done);
+	});
+
+	it("empty", function(done){
+		db.countConductShinryouForConduct(conn, 0, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).equal(0);
+			done();
+		})
+	});
+
+	it("multiple", function(done){
+		var conductId = 120;
+		var n = 3;
+		var shinryouList = util.iterMap(n, function(i){
+			var props = {
+				visit_conduct_id: conductId
+			};
+			return m.conductShinryou(props);
+		});
+		conti.exec([
+			function(done){
+				m.batchSave(conn, shinryouList, done);
+			},
+			function(done){
+				db.countConductShinryouForConduct(conn, conductId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).equal(n);
+					done();
+				})
+			}
+		], done);
 	})
 });

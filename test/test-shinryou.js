@@ -2,6 +2,8 @@ var setup = require("./setup");
 var expect = require("chai").expect;
 var util = require("./util");
 var db = require("../index");
+var m = require("./model");
+var conti = require("../lib/conti");
 
 var clearTable = util.createClearTableFun("visit_shinryou");
 
@@ -115,5 +117,64 @@ describe("Testing shinryou", function(){
 				})
 			})
 		})
+	})
+});
+
+describe("Testing count shinryou", function(){
+	before(clearTable);
+	after(clearTable);
+
+	var conn;
+
+	beforeEach(function(done){
+		setup.connect(function(err, conn_){
+			if( err ){
+				done(err);
+				return;
+			}
+			conn = conn_;
+			done();
+		})
+	});
+
+	afterEach(function(done){
+		setup.release(conn, done);
+	});
+
+	it("empty", function(done){
+		db.countShinryouForVisit(conn, 0, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).equal(0);
+			done();
+		})
+	})
+
+	it("multiple", function(done){
+		var visitId = 3296;
+		var n = 3;
+		var shinryouList = util.iterMap(n, function(i){
+			var props = {
+				visit_id: visitId
+			}
+			return m.shinryou(props);
+		});
+		conti.exec([
+			function(done){
+				m.batchSave(conn, shinryouList, done);
+			},
+			function(done){
+				db.countShinryouForVisit(conn, visitId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).equal(n);
+					done();
+				})
+			}
+		], done);
 	})
 });

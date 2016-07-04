@@ -44,10 +44,47 @@ describe("Testing safely delete visit", function(){
 	var valid_upto = "2018-03-31";
 	var valid_upto_no_limit = "0000-00-00";
 
-	it("mock", function(done){
-		db.safelyDeleteVisit(conn, 0, function(err){
-			done(err);
-		})
+	it("empty", function(done){
+		var visit = m.visit();
+		var visitId;
+		conti.exec([
+			function(done){
+				visit.save(conn, done);
+			},
+			function(done){
+				visitId = visit.data.visit_id;
+				db.safelyDeleteVisit(conn, visitId, done);
+			}
+		], done);
 	});
+
+	it("confirm pharma queue is also deleted", function(done){
+		var visit = m.visit();
+		var visitId;
+		var pq;
+		conti.exec([
+			function(done){
+				visit.save(conn, done);
+			},
+			function(done){
+				visitId = visit.data.visit_id;
+				pq = m.pharmaQueue({visit_id: visitId});
+				pq.save(conn, done);
+			},
+			function(done){
+				db.safelyDeleteVisit(conn, visitId, done);
+			},
+			function(done){
+				db.findPharmaQueue(conn, visitId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).null;
+					done();
+				})
+			}
+		], done);
+	})
 
 })

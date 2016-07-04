@@ -1,28 +1,24 @@
 var config = require("./db-config");
 var mysql = require("mysql");
 
-var nConn = 0;
+var conn = mysql.createConnection(config);
+
+exports.getConnection = function(){
+	return conn;
+}
+
+exports.disposeConnection = function(conn, done){
+	conn.end(done);
+}
 
 exports.connect = function(cb){
-	if( nConn > 0 ){
-		cb("connection not released");
-	}
-	var conn = mysql.createConnection(config);
-	nConn += 1;
-	conn.connect(function(err){
-		if( err ){
-			conn.end();
-			nConn -= 1;
-		}
-		cb(err, conn);
-	});
+	cb(undefined, conn);
 }
 
 exports.release = function(conn, cb){
-	nConn -= 1;
-	conn.end(cb);
+	cb();
 }
 
 exports.confirmNoLeak = function(){
-	return nConn == 0;
+	return true;
 }

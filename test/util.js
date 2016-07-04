@@ -166,10 +166,9 @@ exports.withConnect = function(fn, done){
 }
 
 exports.createClearTableFun = function(tableName){
+	var tableNames = tableName instanceof Array ? tableName : [tableName];
 	return function(done){
-		exports.withConnect(function(conn, done){
-			exports.resetTable(conn, tableName, done);
-		}, done);
+		exports.clearTables(setup.getConnection(), tableNames, done);
 	};
 };
 

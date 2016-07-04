@@ -5,14 +5,7 @@ var db = require("../index");
 var conti = require("../lib/conti");
 var m = require("./model");
 
-function clearTable(done){
-	util.withConnect(function(conn, done){
-		util.initTables(conn,
-			[],
-			["visit_charge", "visit"],
-			done);
-	}, done);
-}
+var clearTable = util.createClearTableFun(["visit_charge", "visit"]);
 
 describe("Testing charge", function(){
 

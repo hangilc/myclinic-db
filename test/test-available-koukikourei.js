@@ -8,14 +8,7 @@ var util = require("./util");
 var conti = require("../lib/conti");
 var m = require("./model");
 
-function initDb(done){
-	util.withConnect(function(conn, done){
-		util.initTables(conn, 
-			[],
-			["hoken_koukikourei"],
-			done);
-	}, done);
-}
+var initDb = util.createClearTableFun(["hoken_koukikourei"]);
 
 function mkHoken(patientId, validFrom, validUpto){
 	return m.koukikourei({patient_id: patientId, valid_from: validFrom, valid_upto: validUpto});

@@ -80,6 +80,29 @@ KizaiMaster.prototype.save = function(conn, done){
 
 exports.kizaiMaster = function(props){
 	return new KizaiMaster(props);
+};
+
+// Shoubyoumei Master //////////////////////////////////////////////////////
+
+function ShoubyoumeiMaster(props){
+	this.data = util.mockShoubyoumeiMaster(props);
+	this.saved = false;
+}
+
+ShoubyoumeiMaster.prototype.save = function(conn, done){
+	var self = this;
+	db.insertShoubyoumeiMaster(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+};
+
+exports.shoubyoumeiMaster = function(props){
+	return new ShoubyoumeiMaster(props);
 }
 
 // Text ////////////////////////////////////////////////////////////////////

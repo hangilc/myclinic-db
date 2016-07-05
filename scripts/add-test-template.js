@@ -8,35 +8,12 @@ var util = require("./util");
 var conti = require("../lib/conti");
 var m = require("./model");
 
-function initDb(done){
-	util.withConnect(function(conn, done){
-		util.initTables(conn, 
-			["shinryoukoui_master_arch", "iyakuhin_master_arch", "tokuteikizai_master_arch", "visit_gazou_label"],
-			["visit_conduct", "visit_conduct_shinryou", "visit_conduct_drug", "visit_conduct_kizai"],
-			done);
-	}, done);
-}
+var initDb = util.createClearTableFun(["visit_text"]);
 
 describe("Testing new test", function(){
-	var conn;
+	var conn = setup.getConnection();
 
 	beforeEach(initDb);
-
-	beforeEach(function(done){
-		setup.connect(function(err, conn_){
-			if( err ){
-				done(err);
-				return;
-			}
-			conn = conn_;
-			done();
-		})
-	});
-
-	afterEach(function(done){
-		setup.release(conn, done);
-	});
-
 	afterEach(initDb);
 
 	var valid_from = "2016-04-01";

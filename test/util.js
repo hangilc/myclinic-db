@@ -3,10 +3,12 @@ var moment = require("moment");
 var conti = require("./conti");
 var db = require("../index");
 
-function incDate(sqldate, n){
+function incDay(sqldate, n){
 	if( n === undefined ) n = 1;
 	return moment(sqldate).add(1, "days").format("YYYY-MM-DD");
 }
+
+exports.incDay = incDay;
 
 function incMonth(sqldate, n){
 	if( n === undefined ) n = 1;
@@ -253,8 +255,8 @@ exports.alterShahokokuho = function(hoken){
 	hoken.hihokensha_kigou += ":changed";
 	hoken.hihokensha_bangou += ":changed";
 	hoken.honnin = hoken.honnin === 0 ? 1 : 0;
-	hoken.valid_from = incDate(hoken.valid_from);
-	hoken.valid_upto = incDate(hoken.valid_upto);
+	hoken.valid_from = incDay(hoken.valid_from);
+	hoken.valid_upto = incDay(hoken.valid_upto);
 }
 
 var mockKoukikoureiIndex = 1;
@@ -476,6 +478,18 @@ exports.mockKizaiMaster = function(props){
 		yomi: "ﾀﾞｲｶｸ",
 		unit: "枚",
 		kingaku: "116.00",
+		valid_from: "2016-04-01",
+		valid_upto: "0000-00-00"
+	}, props || {});
+};
+
+var mockShoubyoumeiMasterIndex = 1;
+
+exports.mockShoubyoumeiMaster = function(props){
+	var index = mockShoubyoumeiMasterIndex++;
+	return assignProps({
+		shoubyoumeicode: 1000 + index,
+		name: "Shoubyoumei name " + index,
 		valid_from: "2016-04-01",
 		valid_upto: "0000-00-00"
 	}, props || {});

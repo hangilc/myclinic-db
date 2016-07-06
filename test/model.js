@@ -105,6 +105,29 @@ exports.shoubyoumeiMaster = function(props){
 	return new ShoubyoumeiMaster(props);
 }
 
+// Shuushokugo Master //////////////////////////////////////////////////////
+
+function ShuushokugoMaster(props){
+	this.data = util.mockShuushokugoMaster(props);
+	this.saved = false;
+}
+
+ShuushokugoMaster.prototype.save = function(conn, done){
+	var self = this;
+	db.insertShuushokugoMaster(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+};
+
+exports.shuushokugoMaster = function(props){
+	return new ShuushokugoMaster(props);
+}
+
 // Text ////////////////////////////////////////////////////////////////////
 
 function Text(props){

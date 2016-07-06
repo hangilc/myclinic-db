@@ -25,6 +25,7 @@ extend(db, require("./lib/conduct-kizai"));
 extend(db, require("./lib/iyakuhin-master"));
 extend(db, require("./lib/shinryou-master"));
 extend(db, require("./lib/shoubyoumei-master"));
+extend(db, require("./lib/shuushokugo-master"));
 extend(db, require("./lib/kizai-master"));
 extend(db, require("./lib/charge"));
 extend(db, require("./lib/wqueue"));

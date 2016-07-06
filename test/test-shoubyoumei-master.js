@@ -10,7 +10,7 @@ var m = require("./model");
 
 var initDb = util.createClearTableFun(["shoubyoumei_master_arch"]);
 
-describe("Testing new test", function(){
+describe("Testing shoubyoumei master", function(){
 	var conn = setup.getConnection();
 
 	beforeEach(initDb);

@@ -495,6 +495,16 @@ exports.mockShoubyoumeiMaster = function(props){
 	}, props || {});
 };
 
+var mockShuushokugoMasterIndex = 1;
+
+exports.mockShuushokugoMaster = function(props){
+	var index = mockShuushokugoMasterIndex++;
+	return assignProps({
+		shuushokugocode: 2000 + index,
+		name: "Shuushokugo name " + index
+	}, props || {});
+};
+
 var mockChargeIndex = 1;
 
 exports.mockCharge = function(props){

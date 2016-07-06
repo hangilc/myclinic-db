@@ -9,6 +9,10 @@
     "add-test": "node scripts/add-test.js"
   },
   "author": "Hagil Chang",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hangilc/myclinic-db.git"
+  },
   "license": "MIT",
   "dependencies": {
     "myclinic-consts": "^1.0.0",

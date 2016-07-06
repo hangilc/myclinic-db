@@ -91,6 +91,7 @@ function ShoubyoumeiMaster(props){
 
 ShoubyoumeiMaster.prototype.save = function(conn, done){
 	var self = this;
+	console.log(self.data);
 	db.insertShoubyoumeiMaster(conn, self.data, function(err){
 		if( err ){
 			done(err);
@@ -942,29 +943,6 @@ exports.pharmaQueue = function(props){
 	return new PharmaQueue(props);
 };
 
-// Disease /////////////////////////////////////////////////////////////////
-
-function Disease(props){
-	this.data = util.mockDisease(props);
-	this.saved = false;
-}
-
-Disease.prototype.save = function(conn, done){
-	var self = this;
-	db.insertDisease(conn, self.data, function(err){
-		if( err ){
-			done(err);
-			return;
-		}
-		self.saved = true;
-		done();
-	})
-};
-
-exports.disease = function(props){
-	return new Disease(props);
-};
-
 // DiseaseAdj //////////////////////////////////////////////////////////////
 
 function DiseaseAdj(props){
@@ -986,6 +964,46 @@ DiseaseAdj.prototype.save = function(conn, done){
 
 exports.diseaseAdj = function(props){
 	return new DiseaseAdj(props);
+};
+
+// Disease /////////////////////////////////////////////////////////////////
+
+function Disease(props){
+	this.data = util.mockDisease(props);
+	this.saved = false;
+}
+
+Disease.prototype.setMaster = function(master){
+	this.data.shoubyoumeicode = master.data.shoubyoumeicode;
+	this.master = master;
+	return this;
+};
+
+Disease.prototype.save = function(conn, done){
+	var self = this;
+	conti.exec([
+		function(done){
+			if( self.master && !self.master.saved ){
+				self.master.save(conn, done);
+			} else {
+				done();
+			}
+		},
+		function(done){
+			db.insertDisease(conn, self.data, function(err){
+				if( err ){
+					done(err);
+					return;
+				}
+				self.saved = true;
+				done();
+			})
+		}
+	], done);
+};
+
+exports.disease = function(props){
+	return new Disease(props);
 };
 
 // Pharma Drug /////////////////////////////////////////////////////////////

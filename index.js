@@ -14,4 +14,5 @@ extend(db, require("./lib/hoken"));
 extend(db, require("./lib/start-visit"));
 extend(db, require("./lib/safely-delete-conduct"));
 extend(db, require("./lib/safely-delete-visit"));
+extend(db, require("./lib/full-disease"));
 module.exports = db;

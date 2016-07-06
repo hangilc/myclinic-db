@@ -1,4 +1,4 @@
-# myclinic-consts
+# myclinic-db
 
 Database interface for myclinic (an electronic medical record system for small clinics).
 

@@ -564,6 +564,17 @@ exports.mockDiseaseAdj = function(props){
 	}, props || {});
 };
 
+var mockPharmaDrugIndex = 1;
+
+exports.mockPharmaDrug = function(props){
+	var index = mockPharmaDrugIndex++;
+	return assignProps({
+		iyakuhincode: 1000 + index,
+		description: "Description " + index,
+		sideeffect: "Side effect " + index
+	}, props || {});
+};
+
 exports.batchInsertPatients = function(conn, patients, done){
 	conti.exec([
 		conti.forEach(patients, function(patient, done){

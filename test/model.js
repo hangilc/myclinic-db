@@ -988,6 +988,29 @@ exports.diseaseAdj = function(props){
 	return new DiseaseAdj(props);
 };
 
+// Pharma Drug /////////////////////////////////////////////////////////////
+
+function PharmaDrug(props){
+	this.data = util.mockPharmaDrug(props);
+	this.saved = false;
+}
+
+PharmaDrug.prototype.save = function(conn, done){
+	var self = this;
+	db.insertPharmaDrug(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+};
+
+exports.pharmaDrug = function(props){
+	return new PharmaDrug(props);
+};
+
 // batchSave ///////////////////////////////////////////////////////////////
 
 exports.batchSave = function(conn, models, done){

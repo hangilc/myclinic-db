@@ -1,0 +1,1 @@
+* visit_payment has no primary key (it should be composite with visit_id, paytime)

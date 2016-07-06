@@ -1034,6 +1034,29 @@ exports.prescExample = function(props){
 	return new PrescExample(props);
 };
 
+// Payment /////////////////////////////////////////////////////////////////
+
+function Payment(props){
+	this.data = util.mockPayment(props);
+	this.saved = false;
+}
+
+Payment.prototype.save = function(conn, done){
+	var self = this;
+	db.insertPayment(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+};
+
+exports.payment = function(props){
+	return new Payment(props);
+};
+
 // batchSave ///////////////////////////////////////////////////////////////
 
 exports.batchSave = function(conn, models, done){

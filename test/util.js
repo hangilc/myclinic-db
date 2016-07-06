@@ -588,6 +588,18 @@ exports.mockPrescExample = function(props){
 		m_category: index % 3,
 		m_comment: "COMMENT " + index
 	}, props || {});
+};
+
+var mockPaymentIndex = 1;
+var mockPaymentAt = "2016-07-06 16:00:32";
+
+exports.mockPayment = function(props){
+	var index = mockPaymentIndex++;
+	return assignProps({
+		visit_id: 39842 + index,
+		amount: (index * 10) % 2000,
+		paytime: moment(mockPaymentAt).add(mockPaymentIndex*10, "minutes").format("YYYY-MM-DD HH:mm:ss")
+	}, props || {});
 }
 
 exports.batchInsertPatients = function(conn, patients, done){

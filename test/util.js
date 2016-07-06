@@ -20,6 +20,10 @@ function incYear(sqldate, n){
 	return moment(sqldate).add(1, "years").format("YYYY-MM-DD");
 }
 
+exports.sqlDatePart = function(sqldatetime){
+	return sqldatetime.slice(0, 10);
+}
+
 function pad(num, digits){
 	num = "" + num;
 	if( num.length < digits ){

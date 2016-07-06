@@ -44,11 +44,10 @@ describe("Testing listCurrentFullDiseases", function(){
 		var diseases = byoumeiMasters.map(function(master){
 			return m.disease({
 				patient_id: patientId,
-				shoubyoumeicode: master.data.shoubyoumeicode,
-				start_date: at,
+				start_date: util.sqlDatePart(at),
 				end_date: "0000-00-00",
 				end_reason: util.DiseaseEndReasonNotEnded
-			});
+			}).setMaster(master);
 		});
 		conti.exec([
 			function(done){
@@ -63,7 +62,47 @@ describe("Testing listCurrentFullDiseases", function(){
 						done(err);
 						return;
 					}
-					console.log(result);
+					var ans = diseases.map(function(d){ return d.getFullData(); });
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+	});
+
+	it("with adj", function(done){
+		var patientId = 3250;
+		var diseases = util.iterMap(4, function(){
+			var disease = m.disease({
+				patient_id: patientId,
+				start_date: util.sqlDatePart(at),
+				end_date: "0000-00-00",
+				end_reason: util.DiseaseEndReasonNotEnded
+			});
+			var master = m.shoubyoumeiMaster({
+				valid_from: valid_from,
+				valid_upto: valid_upto
+			});
+			disease.setMaster(master);
+			util.iterMap(2, function(){
+				var adjMaster = m.shuushokugoMaster();
+				var adj = m.diseaseAdj().setMaster(adjMaster);
+				disease.addAdj(adj);
+			});
+			return disease;
+		});
+		conti.exec([
+			function(done){
+				m.batchSave(conn, diseases, done);
+			},
+			function(done){
+				db.listCurrentFullDiseases(conn, patientId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = diseases.map(function(d){ return d.getFullData(); });
+					expect(result).eql(ans);
 					done();
 				})
 			}

@@ -91,7 +91,6 @@ function ShoubyoumeiMaster(props){
 
 ShoubyoumeiMaster.prototype.save = function(conn, done){
 	var self = this;
-	console.log(self.data);
 	db.insertShoubyoumeiMaster(conn, self.data, function(err){
 		if( err ){
 			done(err);
@@ -950,16 +949,41 @@ function DiseaseAdj(props){
 	this.saved = false;
 }
 
+DiseaseAdj.prototype.setMaster = function(master){
+	this.master = master;
+	this.data.shuushokugocode = master.data.shuushokugocode;
+	return this;
+}
+
 DiseaseAdj.prototype.save = function(conn, done){
 	var self = this;
-	db.insertDiseaseAdj(conn, self.data, function(err){
-		if( err ){
-			done(err);
-			return;
+	conti.exec([
+		function(done){
+			if( self.master && !self.master.saved ){
+				self.master.save(conn, done);
+			} else {
+				done();
+			}
+		},
+		function(done){
+			db.insertDiseaseAdj(conn, self.data, function(err){
+				if( err ){
+					done(err);
+					return;
+				}
+				self.saved = true;
+				done();
+			})
 		}
-		self.saved = true;
-		done();
-	})
+	], done);
+};
+
+DiseaseAdj.prototype.getFullData = function(){
+	var full = util.assign({}, this.data);
+	if( this.master ){
+		util.assign(full, this.master.data);
+	}
+	return full;
 };
 
 exports.diseaseAdj = function(props){
@@ -970,12 +994,18 @@ exports.diseaseAdj = function(props){
 
 function Disease(props){
 	this.data = util.mockDisease(props);
+	this.adjList = [];
 	this.saved = false;
 }
 
 Disease.prototype.setMaster = function(master){
 	this.data.shoubyoumeicode = master.data.shoubyoumeicode;
 	this.master = master;
+	return this;
+};
+
+Disease.prototype.addAdj = function(adj){
+	this.adjList.push(adj);
 	return this;
 };
 
@@ -998,8 +1028,27 @@ Disease.prototype.save = function(conn, done){
 				self.saved = true;
 				done();
 			})
+		},
+		function(done){
+			conti.forEach(self.adjList, function(adj, done){
+				if( !adj.saved ){
+					adj.data.disease_id = self.data.disease_id;
+					adj.save(conn, done);
+				} else {
+					done();
+				}
+			}, done);
 		}
 	], done);
+};
+
+Disease.prototype.getFullData = function(){
+	var data = util.assign({}, this.data);
+	if( this.master ){
+		util.assign(data, this.master.data);
+	}
+	data.adj_list = this.adjList.map(function(adj){ return adj.getFullData(); });
+	return data;
 };
 
 exports.disease = function(props){

@@ -95,32 +95,52 @@ describe("Testing search shuushokugo master", function(){
 		], done);
 	});
 
-	it("case 4", function(done){
-		var master1 = m.shoubyoumeiMaster({
-			name: "あいう",
-			valid_from: util.incDay(at, -100),
-			valid_upto: util.incDay(at, -10)
-		});
-		var master2 = m.shoubyoumeiMaster({
-			name: "おいえ",
-			valid_from: valid_from,
-			valid_upto: valid_upto
-		});
+});
+
+describe("Testing get shuushokugo by name", function(){
+	var conn = setup.getConnection();
+
+	beforeEach(initDb);
+	afterEach(initDb);
+
+	var valid_from = "2016-04-01";
+	var at = "2016-06-26 21:35:21";
+	var valid_upto = "2018-03-31";
+	var valid_upto_no_limit = "0000-00-00";
+
+	it("fail", function(done){
+		db.getShuushokugoMasterByName(conn, "あいう", function(err){
+			expect(err).ok;
+			done();
+		})
+	});
+
+	function addMasters(names, done){
+		conti.forEach(names, function(name, done){
+			var master = m.shuushokugoMaster({
+				name: name
+			});
+			master.save(conn, done);
+		}, done);
+	}
+
+	it("case 1", function(done){
 		conti.exec([
 			function(done){
-				m.batchSave(conn, [master1, master2], done);
+				addMasters(["あいう", "かきく", "さしす"], done);
 			},
 			function(done){
-				db.searchShoubyoumeiMaster(conn, "い", at, function(err, result){
+				db.getShuushokugoMasterByName(conn, "かきく", function(err, result){
 					if( err ){
 						done(err);
 						return;
 					}
-					expect(util.pluck(result, "name")).eql(["おいえ"]);
+					expect(result.name).eql("かきく");
 					done();
 				})
 			}
 		], done);
 	});
 
-})
+});
+

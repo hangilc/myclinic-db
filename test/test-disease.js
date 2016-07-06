@@ -10,7 +10,7 @@ var m = require("./model");
 
 var initDb = util.createClearTableFun(["disease"]);
 
-describe("Testing new test", function(){
+describe("Testing disease", function(){
 	var conn = setup.getConnection();
 
 	beforeEach(initDb);

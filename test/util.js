@@ -554,6 +554,16 @@ exports.mockDisease = function(props){
 	}, props || {});
 };
 
+var mockDiseaseAdjIndex = 1;
+
+exports.mockDiseaseAdj = function(props){
+	var index = mockDiseaseAdjIndex++;
+	return assignProps({
+		disease_id: 1000 + index,
+		shuushokugocode: 200000 + index
+	}, props || {});
+};
+
 exports.batchInsertPatients = function(conn, patients, done){
 	conti.exec([
 		conti.forEach(patients, function(patient, done){

@@ -965,6 +965,29 @@ exports.disease = function(props){
 	return new Disease(props);
 };
 
+// DiseaseAdj //////////////////////////////////////////////////////////////
+
+function DiseaseAdj(props){
+	this.data = util.mockDiseaseAdj(props);
+	this.saved = false;
+}
+
+DiseaseAdj.prototype.save = function(conn, done){
+	var self = this;
+	db.insertDiseaseAdj(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+};
+
+exports.diseaseAdj = function(props){
+	return new DiseaseAdj(props);
+};
+
 // batchSave ///////////////////////////////////////////////////////////////
 
 exports.batchSave = function(conn, models, done){

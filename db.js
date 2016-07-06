@@ -33,6 +33,7 @@ extend(db, require("./lib/pharma-queue"));
 extend(db, require("./lib/disease"));
 extend(db, require("./lib/disease-adj"));
 extend(db, require("./lib/pharma-drug"));
+extend(db, require("./lib/presc-example"));
 extend(db, require("./lib/recent-visits"));
 extend(db, require("./lib/full-wqueue"));
 extend(db, require("./lib/list-todays-visits"));

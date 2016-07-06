@@ -575,6 +575,21 @@ exports.mockPharmaDrug = function(props){
 	}, props || {});
 };
 
+var mockPrescExampleIndex = 1;
+
+exports.mockPrescExample = function(props){
+	var index = mockPrescExampleIndex++;
+	return assignProps({
+		m_iyakuhincode: 324389532 + index,
+		m_master_valid_from: "2016-04-01",
+		m_amount: ((0.5 * index) % 6) + "",
+		m_usage: "用法 " + index,
+		m_days: index % 30,
+		m_category: index % 3,
+		m_comment: "COMMENT " + index
+	}, props || {});
+}
+
 exports.batchInsertPatients = function(conn, patients, done){
 	conti.exec([
 		conti.forEach(patients, function(patient, done){

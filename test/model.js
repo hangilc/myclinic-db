@@ -1011,6 +1011,29 @@ exports.pharmaDrug = function(props){
 	return new PharmaDrug(props);
 };
 
+// Presc Example ///////////////////////////////////////////////////////////
+
+function PrescExample(props){
+	this.data = util.mockPrescExample(props);
+	this.saved = false;
+}
+
+PrescExample.prototype.save = function(conn, done){
+	var self = this;
+	db.insertPrescExample(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+};
+
+exports.prescExample = function(props){
+	return new PrescExample(props);
+};
+
 // batchSave ///////////////////////////////////////////////////////////////
 
 exports.batchSave = function(conn, models, done){

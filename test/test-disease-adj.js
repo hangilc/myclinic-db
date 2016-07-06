@@ -96,4 +96,52 @@ describe("Testing disease adj", function(){
 		], done);
 	});
 
-})
+});
+
+describe("Testing list disease adj", function(){
+	var conn = setup.getConnection();
+
+	beforeEach(initDb);
+	afterEach(initDb);
+
+	var valid_from = "2016-04-01";
+	var at = "2016-06-26 21:35:21";
+	var valid_upto = "2018-03-31";
+	var valid_upto_no_limit = "0000-00-00";
+
+	it("empty", function(done){
+		db.listDiseaseAdjForDisease(conn, 0, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).eql([]);
+			done();
+		})
+	});
+
+	it("multiple", function(done){
+		var n = 6;
+		var diseaseId = 2000;
+		var adjList = util.iterMap(n, function(i){
+			return m.diseaseAdj({
+				disease_id: diseaseId
+			});
+		});
+		conti.exec([
+			function(done){
+				m.batchSave(conn, adjList, done);
+			},
+			function(done){
+				db.listDiseaseAdjForDisease(conn, diseaseId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).eql(util.pluck(adjList, "data"));
+					done();
+				})
+			}
+		], done);
+	})
+});

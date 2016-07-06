@@ -942,6 +942,29 @@ exports.pharmaQueue = function(props){
 	return new PharmaQueue(props);
 };
 
+// Disease /////////////////////////////////////////////////////////////////
+
+function Disease(props){
+	this.data = util.mockDisease(props);
+	this.saved = false;
+}
+
+Disease.prototype.save = function(conn, done){
+	var self = this;
+	db.insertDisease(conn, self.data, function(err){
+		if( err ){
+			done(err);
+			return;
+		}
+		self.saved = true;
+		done();
+	})
+};
+
+exports.disease = function(props){
+	return new Disease(props);
+};
+
 // batchSave ///////////////////////////////////////////////////////////////
 
 exports.batchSave = function(conn, models, done){

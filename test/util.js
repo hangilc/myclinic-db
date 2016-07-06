@@ -541,6 +541,19 @@ exports.mockPharmaQueue = function(props){
 	}, props || {});
 };
 
+var mockDiseaseIndex = 1;
+
+exports.mockDisease = function(props){
+	var index = mockDiseaseIndex++;
+	return assignProps({
+		patient_id: 3135 + index,
+		shoubyoumeicode: 482134 + index,
+		start_date: "2016-07-06",
+		end_date: "0000-00-00",
+		end_reason: "N"
+	}, props || {});
+};
+
 exports.batchInsertPatients = function(conn, patients, done){
 	conti.exec([
 		conti.forEach(patients, function(patient, done){

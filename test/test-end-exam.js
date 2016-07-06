@@ -78,7 +78,7 @@ describe("Testing end exam", function(){
 						done(err);
 						return;
 					}
-					expect(result.wait_state).eql(util.wqueueStateWaitCashier);
+					expect(result.wait_state).eql(util.WqueueStateWaitCashier);
 					done();
 				})
 			},
@@ -138,7 +138,7 @@ describe("Testing end exam", function(){
 						done(err);
 						return;
 					}
-					expect(result.wait_state).eql(util.wqueueStateWaitCashier);
+					expect(result.wait_state).eql(util.WqueueStateWaitCashier);
 					done();
 				})
 			},
@@ -148,7 +148,7 @@ describe("Testing end exam", function(){
 						done(err);
 						return;
 					}
-					expect(result).eql({visit_id: visitId, pharma_state: util.pharmaQueueStateWaitPack})
+					expect(result).eql({visit_id: visitId, pharma_state: util.PharmaQueueStateWaitPack})
 					done();
 				})
 			}

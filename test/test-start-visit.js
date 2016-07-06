@@ -17,7 +17,7 @@ function initDb(done){
 	}, done);
 }
 
-var waitExam = util.wqueueStateWaitExam;
+var waitExam = util.WqueueStateWaitExam;
 
 function nullVisit(){
 	return {

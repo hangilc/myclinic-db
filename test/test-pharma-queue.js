@@ -62,7 +62,7 @@ describe("Testing pharma queue", function(){
 	});
 
 	it("find (one)", function(done){
-		var q = {visit_id: 2113, pharma_state: util.pharmaQueueStateWaitPack};
+		var q = {visit_id: 2113, pharma_state: util.PharmaQueueStateWaitPack};
 		conti.exec([
 			function(done){
 				db.insertPharmaQueue(conn, q, done);
@@ -88,7 +88,7 @@ describe("Testing pharma queue", function(){
 	});
 
 	it("get (one)", function(done){
-		var q = {visit_id: 2113, pharma_state: util.pharmaQueueStateWaitPack};
+		var q = {visit_id: 2113, pharma_state: util.PharmaQueueStateWaitPack};
 		conti.exec([
 			function(done){
 				db.insertPharmaQueue(conn, q, done);
@@ -107,8 +107,8 @@ describe("Testing pharma queue", function(){
 	});
 
 	it("update", function(done){
-		var q = m.pharmaQueue({visit_id: 2114, pharma_state: util.pharmaQueueStateWaitPack});
-		var qq = util.assign({}, q.data, {pharma_state: util.pharmaQueueStateInPack});
+		var q = m.pharmaQueue({visit_id: 2114, pharma_state: util.PharmaQueueStateWaitPack});
+		var qq = util.assign({}, q.data, {pharma_state: util.PharmaQueueStateInPack});
 		conti.exec([
 			function(done){
 				q.save(conn, done);

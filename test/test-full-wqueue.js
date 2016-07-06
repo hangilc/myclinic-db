@@ -4,12 +4,12 @@ var setup = require("./setup");
 var conti = require("./conti");
 var util = require("./util");
 
-var wqueueStateWaitExam = 0;
-var wqueueStateInExam = 1;
-var wqueueStateWaitCashier = 2;
-var wqueueStateWaitDrug = 3;
-var wqueueStateWaitReExam = 4;
-var wqueueStateWaitAppoint = 5;
+var wqueueStateWaitExam = util.WqueueStateWaitExam;
+var wqueueStateInExam = util.WqueueStateInExam;
+var wqueueStateWaitCashier = util.WqueueStateWaitCashier;
+var wqueueStateWaitDrug = util.WqueueStateWaitCashier;
+var wqueueStateWaitReExam = util.WqueueStateWaitCashier;
+var wqueueStateWaitAppoint = util.WqueueStateWaitCashier;
 
 function insertPatients(conn, patients, cb){
 	conti.exec([

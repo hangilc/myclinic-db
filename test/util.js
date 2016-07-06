@@ -626,7 +626,7 @@ exports.batchInsertTexts = function(conn, texts, done){
 	], done);
 }
 
-var uConst = require("../lib/util-const");
+var uConst = require("myclinic-consts");
 Object.keys(uConst).forEach(function(key){
 	exports[key] = uConst[key];
 });

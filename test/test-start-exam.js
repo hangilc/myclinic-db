@@ -46,7 +46,7 @@ describe("Testing startExam", function(){
 
 	it("minimal", function(done){
 		var visitId = 1000;
-		var wq = m.wqueue({visit_id: visitId, wait_state: util.wqueueStateWaitExam});
+		var wq = m.wqueue({visit_id: visitId, wait_state: util.WqueueStateWaitExam});
 		conti.exec([
 			function(done){
 				m.batchSave(conn, [wq], function(err){
@@ -68,7 +68,7 @@ describe("Testing startExam", function(){
 					}
 					var ans = {
 						visit_id: visitId,
-						wait_state: util.wqueueStateInExam
+						wait_state: util.WqueueStateInExam
 					}
 					expect(result).eql(ans);
 					done();
@@ -102,7 +102,7 @@ describe("Testing startExam", function(){
 					}
 					var ans = {
 						visit_id: visitId,
-						wait_state: util.wqueueStateInExam
+						wait_state: util.WqueueStateInExam
 					}
 					expect(result).eql(ans);
 					done();
@@ -142,7 +142,7 @@ describe("Testing suspendExam", function(done){
 
 	it("minimal", function(done){
 		var visitId = 1000;
-		var wq = m.wqueue({visit_id: visitId, wait_state: util.wqueueStateInExam});
+		var wq = m.wqueue({visit_id: visitId, wait_state: util.WqueueStateInExam});
 		conti.exec([
 			function(done){
 				wq.save(conn, done);
@@ -158,7 +158,7 @@ describe("Testing suspendExam", function(done){
 					}
 					var ans = {
 						visit_id: visitId,
-						wait_state: util.wqueueStateWaitReExam
+						wait_state: util.WqueueStateWaitReExam
 					}
 					expect(result).eql(ans);
 					done();
@@ -195,7 +195,7 @@ describe("Testing suspendExam", function(done){
 					}
 					var ans = {
 						visit_id: visitId,
-						wait_state: util.wqueueStateWaitReExam
+						wait_state: util.WqueueStateWaitReExam
 					}
 					expect(result).eql(ans);
 					done();

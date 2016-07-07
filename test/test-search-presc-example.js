@@ -16,10 +16,13 @@ describe("Testing search presc example", function(){
 	beforeEach(initDb);
 	afterEach(initDb);
 
+	var old_valid_from = "2014-04-01";
+	var old_valid_upto = "2016-03-31";
 	var valid_from = "2016-04-01";
-	var at = "2016-06-26 21:35:21";
+	var at = "2016-06-26";
 	var valid_upto = "2018-03-31";
-	var valid_upto_no_limit = "0000-00-00";
+	var future_valid_from = "2018-04-01";
+	var future_valid_upto = "2020-03-31";
 
 	it("empty", function(done){
 		db.searchPrescExample(conn, "テスト", function(err, result){
@@ -30,6 +33,38 @@ describe("Testing search presc example", function(){
 			expect(result).eql([]);
 			done();
 		})
+	});
+
+	function makePrescExample(name, valid_from, valid_upto){
+		var master = model.iyakuhinMaster({
+			name: name,
+			valid_from: valid_from,
+			valid_upto: valid_upto
+		});
+		return model.prescExample({
+			m_master_valid_from: valid_from
+		}).setMaster(master);
+	}
+
+	it("case 1", function(done){
+		var ex = makePrescExample("あいう", valid_from, valid_upto);
+		conti.exec([
+			function(done){
+				ex.save(conn, done);
+			},
+			function(done){
+				db.searchPrescExample(conn, "い", function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = [ex.getFullData()];
+					console.log(ans);
+					expect(result).eql(ans);
+					done();
+				});
+			}
+		], done);
 	});
 
 });

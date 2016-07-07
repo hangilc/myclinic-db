@@ -1085,16 +1085,41 @@ function PrescExample(props){
 	this.saved = false;
 }
 
+PrescExample.prototype.setMaster = function(master){
+	this.master = master;
+	this.data.m_iyakuhincode = master.data.iyakuhincode;
+	return this;
+};
+
 PrescExample.prototype.save = function(conn, done){
 	var self = this;
-	db.insertPrescExample(conn, self.data, function(err){
-		if( err ){
-			done(err);
-			return;
-		}
-		self.saved = true;
+	if( this.saved ){
 		done();
-	})
+		return;
+	}
+	conti.exec([
+		function(done){
+			if( self.master ){
+				self.master.save(conn, done);
+			} else {
+				done();
+			}
+		},
+		function(done){
+			db.insertPrescExample(conn, self.data, function(err){
+				if( err ){
+					done(err);
+					return;
+				}
+				self.saved = true;
+				done();
+			})
+		}
+	], done);
+};
+
+PrescExample.prototype.getFullData = function(){
+	return util.assign({}, this.data, this.master ? this.master.data : {});
 };
 
 exports.prescExample = function(props){

@@ -6,7 +6,7 @@ var expect = require("chai").expect;
 var DbUtil = require("./db-util");
 var util = require("./util");
 var conti = require("../lib/conti");
-var m = require("./model");
+var model = require("./model");
 
 var initDb = util.createClearTableFun(["visit_text"]);
 

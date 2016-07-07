@@ -33,6 +33,39 @@ describe("Testing disease", function(){
 		});
 	});
 
+	it("insert with datetime", function(done){
+		var start_date = "2016-06-26 21:35:21";
+		var end_date = "2016-07-07 17:20:21";
+		var data = util.mockDisease({
+			start_date: start_date,
+			end_date: end_date
+		});
+		var diseaseId;
+		conti.exec([
+			function(done){
+				db.insertDisease(conn, data, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					diseaseId = result;
+					done();
+				});
+			},
+			function(done){
+				db.getDisease(conn, diseaseId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result.start_date).equal(util.sqlDatePart(start_date));
+					expect(result.end_date).equal(util.sqlDatePart(end_date));
+					done();
+				})
+			}
+		], done);
+	})
+
 	it("get (fail)", function(done){
 		db.getDisease(conn, 0, function(err, result){
 			expect(err).ok;

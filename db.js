@@ -38,4 +38,5 @@ extend(db, require("./lib/payment"));
 extend(db, require("./lib/recent-visits"));
 extend(db, require("./lib/full-wqueue"));
 extend(db, require("./lib/list-todays-visits"));
+extend(db, require("./lib/search-presc-example"));
 module.exports = db;

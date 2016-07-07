@@ -59,12 +59,76 @@ describe("Testing search presc example", function(){
 						return;
 					}
 					var ans = [ex.getFullData()];
-					console.log(ans);
 					expect(result).eql(ans);
 					done();
 				});
 			}
 		], done);
 	});
+
+	it("case 2", function(done){
+		var ex = makePrescExample("あいう", old_valid_from, old_valid_upto);
+		conti.exec([
+			function(done){
+				ex.save(conn, done);
+			},
+			function(done){
+				db.searchPrescExample(conn, "い", function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = [ex.getFullData()];
+					expect(result).eql(ans);
+					done();
+				});
+			}
+		], done);
+	});
+
+	it("case 3", function(done){
+		var ex = makePrescExample("あいう", future_valid_from, future_valid_upto);
+		conti.exec([
+			function(done){
+				ex.save(conn, done);
+			},
+			function(done){
+				db.searchPrescExample(conn, "い", function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = [ex.getFullData()];
+					expect(result).eql(ans);
+					done();
+				});
+			}
+		], done);
+	});
+
+	it("case 4", function(done){
+		var exlist = [
+			makePrescExample("あいう", valid_from, valid_upto),
+			makePrescExample("かきく", old_valid_from, old_valid_upto),
+			makePrescExample("さいす", future_valid_from, future_valid_upto),
+			makePrescExample("たちつ", valid_from, valid_upto),
+		];
+		conti.exec([
+			function(done){
+				model.batchSave(conn, exlist, done);
+			},
+			function(done){
+				db.searchPrescExample(conn, "い", function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = [0, 2].map(function(i){ return exlist[i].getFullData(); });
+					expect(result).eql(ans);
+					done();
+				});
+			}
+		], done);
+	})
 
 });

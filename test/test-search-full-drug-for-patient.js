@@ -10,11 +10,11 @@ var model = require("./model");
 
 var initDb = util.createClearTableFun(["visit_drug", "visit", "iyakuhin_master_arch"]);
 
-describe("Testing new test", function(){
+describe("Testing search previous drug", function(){
 	var conn = setup.getConnection();
 
 	beforeEach(initDb);
-	afterEach(initDb);
+	//afterEach(initDb);
 
 	var valid_from = "2016-04-01";
 	var at = "2016-06-26";
@@ -56,6 +56,120 @@ describe("Testing new test", function(){
 						return;
 					}
 					var ans = [drug.getFullData()];
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+	});
+
+	it("case 2", function(done){
+		var patientId = 3234;
+		var masters = {
+			"カロナール": model.iyakuhinMaster({
+				name: "カロナール",
+				valid_from: valid_from,
+				valid_upto: valid_upto
+			})
+		}
+		var at1 = "2016-04-21";
+		var visit1 = model.visit({patient_id: patientId, v_datetime: at1});
+		var drugs1 = {
+			"カロナール": function(){
+				return model.drug({
+					d_category: util.DrugCategoryNaifuku,
+					d_amount: "3",
+					d_usage: "分３　毎食後",
+					d_days: 5
+				}).setMaster(masters["カロナール"])
+			}()
+		}
+		Object.keys(drugs1).forEach(function(key){
+			visit1.addDrug(drugs1[key]);
+		})
+		var at2 = "2016-05-20";
+		var visit2 = model.visit({patient_id: patientId, v_datetime: at2});
+		var drugs2 = {
+			"カロナール": function(){
+				return model.drug({
+					d_category: util.DrugCategoryNaifuku,
+					d_amount: "3",
+					d_usage: "分３　毎食後",
+					d_days: 5
+				}).setMaster(masters["カロナール"])
+			}()
+		}
+		Object.keys(drugs2).forEach(function(key){
+			visit2.addDrug(drugs2[key]);
+		})
+		conti.exec([
+			function(done){
+				model.batchSave(conn, [visit1, visit2], done);
+			},
+			function(done){
+				db.searchFullDrugForPatient(conn, patientId, "カロナ", function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = [drugs2["カロナール"].getFullData()];
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+	})
+
+	it("case 3 (change in amount)", function(done){
+		var patientId = 3234;
+		var masters = {
+			"カロナール": model.iyakuhinMaster({
+				name: "カロナール",
+				valid_from: valid_from,
+				valid_upto: valid_upto
+			})
+		}
+		var at1 = "2016-05-21";
+		var visit1 = model.visit({patient_id: patientId, v_datetime: at1});
+		var drugs1 = {
+			"カロナール": function(){
+				return model.drug({
+					d_category: util.DrugCategoryNaifuku,
+					d_amount: "3",
+					d_usage: "分３　毎食後",
+					d_days: 5
+				}).setMaster(masters["カロナール"])
+			}()
+		}
+		Object.keys(drugs1).forEach(function(key){
+			visit1.addDrug(drugs1[key]);
+		})
+		var at2 = "2016-06-20";
+		var visit2 = model.visit({patient_id: patientId, v_datetime: at2});
+		var drugs2 = {
+			"カロナール": function(){
+				return model.drug({
+					d_category: util.DrugCategoryNaifuku,
+					d_amount: "2",
+					d_usage: "分３　毎食後",
+					d_days: 5
+				}).setMaster(masters["カロナール"])
+			}()
+		}
+		Object.keys(drugs2).forEach(function(key){
+			visit2.addDrug(drugs2[key]);
+		})
+		conti.exec([
+			function(done){
+				model.batchSave(conn, [visit1, visit2], done);
+			},
+			function(done){
+				db.searchFullDrugForPatient(conn, patientId, "カロナ", function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = [drugs2["カロナール"].getFullData(), drugs1["カロナール"].getFullData()];
 					expect(result).eql(ans);
 					done();
 				})

@@ -59,6 +59,7 @@ describe("Testing full visit", function(){
 	});
 
 	afterEach(function(done){
+		this.timeout(10000);
 		resetTables(conn, done);
 	})
 
@@ -67,6 +68,7 @@ describe("Testing full visit", function(){
 	});
 
 	it("empty", function(done){
+		this.timeout(10000);
 		var visit = util.mockVisit({
 			shahokokuho_id: 0,
 			koukikourei_id: 0,

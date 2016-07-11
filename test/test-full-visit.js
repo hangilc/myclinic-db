@@ -111,6 +111,7 @@ describe("Testing full visit", function(){
 	});
 
 	it("simple", function(done){
+		this.timeout(10000);
 		var valid_from = "2016-04-01";
 		var at = "2016-06-26 21:35:21";
 		var valid_upto = "0000-00-00";

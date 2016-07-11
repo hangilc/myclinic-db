@@ -10,7 +10,7 @@ var model = require("./model");
 
 var initDb = util.createClearTableFun(["visit_drug", "visit", "iyakuhin_master_arch"]);
 
-describe.skip("Testing search previous drug", function(){
+describe("Testing search previous drug", function(){
 	var conn = setup.getConnection();
 
 	beforeEach(initDb);
@@ -283,7 +283,7 @@ describe.skip("Testing search previous drug", function(){
 	});
 });
 
-describe.skip("Testing search full drug (1 patient 2 visits)", function(done){
+describe("Testing search full drug (1 patient 2 visits)", function(done){
 	var conn = setup.getConnection();
 
 	beforeEach(initDb);
@@ -345,7 +345,7 @@ describe.skip("Testing search full drug (1 patient 2 visits)", function(done){
 		], done);
 	})
 
-	it("2 drugs 1 match", function(done){
+	it("2 drugs 1 match (match first drug)", function(done){
 		var masters = makeMasters(["カロナール", "ロラタジン"]);
 		var visits = makeVisits();
 		var drug_1 = model.drug().setMaster(masters["カロナール"]);
@@ -370,4 +370,101 @@ describe.skip("Testing search full drug (1 patient 2 visits)", function(done){
 		], done);
 	})
 
+	it("2 drugs 1 match (match second drug)", function(done){
+		var masters = makeMasters(["カロナール", "ロラタジン"]);
+		var visits = makeVisits();
+		var drug_1 = model.drug().setMaster(masters["カロナール"]);
+		visits.visit_1.addDrug(drug_1);
+		var drug_2 = model.drug().setMaster(masters["ロラタジン"]);
+		visits.visit_2.addDrug(drug_2);
+		conti.exec([
+			function(done){
+				model.batchSave(conn, [visits.visit_1, visits.visit_2], done);
+			},
+			function(done){
+				db.searchFullDrugForPatient(conn, patientId, "ロラ", function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = [drug_2].map(function(d){ return d.getFullData(); });
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+	})
+
+});
+
+describe("Testing search full drug for patient (2 patients, 2 visits each)", function(){
+	var conn = setup.getConnection();
+
+	beforeEach(initDb);
+	afterEach(initDb);
+
+	var valid_from = "2016-04-01";
+	var at_1       = "2016-06-26";
+	var at_2       = "2016-07-09";
+	var valid_upto = "2018-03-31";
+	var patient_1_id = 2345;
+	var patient_2_id = 5432;
+
+	function makeMasters(names){
+		var masters = {};
+		names.forEach(function(name){
+			masters[name] = model.iyakuhinMaster({
+				name: name,
+				valid_from: valid_from,
+				valid_upto: valid_upto
+			});
+		})
+		return masters;
+	}
+
+
+	it("2 matches", function(done){
+		var masters = makeMasters(["アムロジピン", "アトルバスタチン", "ゾルピデム", "アドエア"]);
+		var visit_1_of_patient_1 = model.visit({
+			patient_id: patient_1_id,
+			v_datetime: at_1 + " 09:23:11"
+		})
+		var visit_1_of_patient_2 = model.visit({
+			patient_id: patient_2_id,
+			v_datetime: at_1 + " 14:06:12"
+		})
+		var visit_2_of_patient_2 = model.visit({
+			patient_id: patient_1_id,
+			v_datetime: at_2 + " 11:32:22"
+		})
+		var visit_2_of_patient_1 = model.visit({
+			patient_id: patient_1_id,
+			v_datetime: at_2 + " 16:32:22"
+		});
+		var drug_1 = model.drug().setMaster(masters["アムロジピン"]);
+		visit_1_of_patient_1.addDrug(drug_1);
+		var drug_2 = model.drug().setMaster(masters["アトルバスタチン"]);
+		visit_1_of_patient_2.addDrug(drug_2);
+		var drug_3 = model.drug().setMaster(masters["ゾルピデム"]);
+		visit_2_of_patient_2.addDrug(drug_3);
+		var drug_4 = model.drug().setMaster(masters["アドエア"]);
+		visit_2_of_patient_1.addDrug(drug_4);
+		conti.exec([
+			function(done){
+				model.batchSave(conn, [visit_1_of_patient_1, visit_1_of_patient_2,
+					visit_2_of_patient_2, visit_2_of_patient_1], done);
+			},
+			function(done){
+				db.searchFullDrugForPatient(conn, patient_1_id, "ア", function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = [drug_4, drug_1].map(function(d){ return d.getFullData(); });
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+	})
 });

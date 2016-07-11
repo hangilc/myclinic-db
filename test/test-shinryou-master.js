@@ -174,7 +174,7 @@ describe("Testing shinryou master", function(){
 	});
 });
 
-describe("Testing searchShinryouMaster", function(){
+describe("Testing searchShinryouMaster (simple case)", function(){
 	var conn = setup.getConnection();
 	beforeEach(clearTable);
 	afterEach(clearTable);
@@ -228,7 +228,7 @@ describe("Testing searchShinryouMaster", function(){
 		], done);
 	});
 
-	it("3 masters ( match)", function(done){
+	it("3 masters (1 match)", function(done){
 		var masters = makeMasters(["初診", "再診", "処方料"]);
 		conti.exec([
 			function(done){
@@ -249,4 +249,92 @@ describe("Testing searchShinryouMaster", function(){
 			}
 		], done);
 	});
+});
+
+describe("Testing searchShinryouMaster (different periods", function(){
+	var conn = setup.getConnection();
+	beforeEach(clearTable);
+	afterEach(clearTable);
+
+	it("1 match", function(done){
+		var valid_from_1 = "2014-04-01";
+		var valid_upto_1 = "2016-03-31";
+		var valid_from_2 = "2016-04-01";
+		var valid_upto_2 = "2018-03-31";
+		var at_1 = "2015-03-21";
+		var at_2 = "2016-12-31";
+		var master_1 = model.shinryouMaster({
+			name: "あい",
+			valid_from: valid_from_1,
+			valid_upto: valid_upto_1
+		})
+		var master_2 = model.shinryouMaster({
+			name: "あう",
+			valid_from: valid_from_2,
+			valid_upto: valid_upto_2
+		})
+		conti.exec([
+			function(done){
+				model.batchSave(conn, [master_1, master_2], done);
+			},
+			function(done){
+				db.searchShinryouMaster(conn, "あ", at_1, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).eql([master_1.data]);
+					done();
+				})
+			}
+		], done);
+	})	
+});
+
+describe("Testing searchShinryouMaster (match substring)", function(){
+	var conn = setup.getConnection();
+	beforeEach(clearTable);
+	beforeEach(prep);
+	afterEach(clearTable);
+	var valid_from = "2014-04-01";
+	var valid_upto = "0000-00-00";
+	var at = "2015-03-21";
+	var master;
+
+	function prep(done){
+		master = model.shinryouMaster({
+			name: "あいう",
+			valid_from: valid_from,
+			valid_upto: valid_upto
+		})
+		model.batchSave(conn, [master], done);
+	}
+
+	function searchAndConfirm(text, done){
+		db.searchShinryouMaster(conn, text, at, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).eql([master.data]);
+			done();
+		})
+	}
+
+	it("match excatly", function(done){
+		searchAndConfirm("あいう", done);
+	})
+
+	it("match head", function(done){
+		searchAndConfirm("あ", done);
+	})
+
+	it("match middle", function(done){
+		searchAndConfirm("い", done);
+	})
+
+	it("match tail", function(done){
+		searchAndConfirm("う", done);
+	})
+
 })

@@ -3,6 +3,8 @@ var expect = require("chai").expect;
 var util = require("./util");
 var db = require("../index");
 var moment = require("moment");
+var model = require("./model");
+var conti = require("../lib/conti");
 
 var clearTable = util.createClearTableFun("shinryoukoui_master_arch");
 
@@ -171,3 +173,80 @@ describe("Testing shinryou master", function(){
 		})
 	});
 });
+
+describe("Testing searchShinryouMaster", function(){
+	var conn = setup.getConnection();
+	beforeEach(clearTable);
+	afterEach(clearTable);
+
+	var valid_from = "2016-04-01";
+	var at = "2016-07-11 12:23:44";
+	var valid_upto = "0000-00-00";
+
+	it("empty", function(done){
+		db.searchShinryouMaster(conn, "テスト", at, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).eql([]);
+			done();
+		})
+	});
+
+	function makeMasters(names){
+		var shinryoucode = 10000;
+		return names.map(function(name){
+			return model.shinryouMaster({
+				shinryoucode: shinryoucode++,
+				name: name,
+				valid_from: valid_from,
+				valid_upto: valid_upto
+			})
+		});
+	}
+
+	it("3 masters (2 match)", function(done){
+		var masters = makeMasters(["初診", "再診", "処方料"]);
+		conti.exec([
+			function(done){
+				model.batchSave(conn, masters, done);
+			},
+			function(done){
+				db.searchShinryouMaster(conn, "診", at, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = [masters[0], masters[1]].map(function(master){
+						return master.data;
+					});
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+	});
+
+	it("3 masters ( match)", function(done){
+		var masters = makeMasters(["初診", "再診", "処方料"]);
+		conti.exec([
+			function(done){
+				model.batchSave(conn, masters, done);
+			},
+			function(done){
+				db.searchShinryouMaster(conn, "処", at, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = [masters[2]].map(function(master){
+						return master.data;
+					});
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+	});
+})

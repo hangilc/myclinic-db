@@ -291,3 +291,51 @@ describe("Testing searchKizaiMaster (different periods", function(){
 		], done);
 	})	
 });
+
+describe("Testing searchKizaiMaster (match substring)", function(){
+	var conn = setup.getConnection();
+	beforeEach(clearTable);
+	beforeEach(prep);
+	afterEach(clearTable);
+	var valid_from = "2014-04-01";
+	var valid_upto = "0000-00-00";
+	var at = "2015-03-21";
+	var master;
+
+	function prep(done){
+		master = model.kizaiMaster({
+			name: "あいう",
+			valid_from: valid_from,
+			valid_upto: valid_upto
+		})
+		model.batchSave(conn, [master], done);
+	}
+
+	function searchAndConfirm(text, done){
+		db.searchKizaiMaster(conn, text, at, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).eql([master.data]);
+			done();
+		})
+	}
+
+	it("match excatly", function(done){
+		searchAndConfirm("あいう", done);
+	})
+
+	it("match head", function(done){
+		searchAndConfirm("あ", done);
+	})
+
+	it("match middle", function(done){
+		searchAndConfirm("い", done);
+	})
+
+	it("match tail", function(done){
+		searchAndConfirm("う", done);
+	})
+
+})

@@ -9,6 +9,7 @@ var conti = require("../lib/conti");
 var m = require("./model");
 
 function initDb(done){
+	this.timeout(10000);
 	util.withConnect(function(conn, done){
 		util.initTables(conn, 
 			["shinryoukoui_master_arch", "iyakuhin_master_arch", "tokuteikizai_master_arch", "visit_gazou_label"],

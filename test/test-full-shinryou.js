@@ -156,4 +156,72 @@ describe("Testing getFullShinryou", function(){
 			})
 		})
 	});
+
+	it("test listFullShinryouForVisit (order)", function(done){
+		var du = new DbUtil(conn);
+		var valid_from = "2016-04-01";
+		var at = "2016-06-26 21:35:21";
+		var valid_upto = "0000-00-00";
+		var visit = util.mockVisit({v_datetime: at});
+		var master1 = util.mockShinryouMaster({
+			valid_from: valid_from,
+			valid_upto: valid_upto,
+			shinryoucode: 1
+		});
+		var master2 = util.mockShinryouMaster({
+			valid_from: valid_from,
+			valid_upto: valid_upto,
+			shinryoucode: 3
+		});
+		var master3 = util.mockShinryouMaster({
+			valid_from: valid_from,
+			valid_upto: valid_upto,
+			shinryoucode: 2
+		});
+		var masters = [master1, master2, master3];
+		var fullShinryouList;
+		function makeFull(){
+			return masters.map(function(master){
+				return {
+					shinryou: util.mockShinryou({
+						visit_id: visit.visit_id,
+						shinryoucode: master.shinryoucode
+					}),
+					master: master
+				}
+			});
+		}
+		conti.exec([
+			function(done){
+				du.in_v(conn, [visit], done);
+			},
+			function(done){
+				du.in_sm(conn, masters, done);
+			},
+			function(done){
+				fullShinryouList = makeFull();
+				var list = fullShinryouList.map(function(item){
+					return item.shinryou;
+				})
+				du.in_s(conn, list, done);
+			}
+		], function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			var ansFullShinryouList = [fullShinryouList[0], fullShinryouList[2], fullShinryouList[1]]
+			var ans = ansFullShinryouList.map(function(item){
+				return util.assign({}, item.shinryou, item.master);
+			});
+			db.listFullShinryouForVisit(conn, visit.visit_id, visit.v_datetime, function(err, result){
+				if( err ){
+					done(err);
+					return;
+				}
+				expect(result).eql(ans);
+				done();
+			})
+		})
+	});
 })

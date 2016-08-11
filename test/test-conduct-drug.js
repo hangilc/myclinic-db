@@ -176,4 +176,62 @@ describe("Testing count conduct drug", function(){
 			}
 		], done);
 	})
-})
+});
+
+describe("Testing listConductDrugsForConduct", function(){
+	before(clearTable);
+	after(clearTable);
+
+	var conn;
+
+	beforeEach(function(done){
+		setup.connect(function(err, conn_){
+			if( err ){
+				done(err);
+				return;
+			}
+			conn = conn_;
+			done();
+		})
+	});
+
+	afterEach(function(done){
+		setup.release(conn, done);
+	});
+
+	it("empty", function(done){
+		db.listConductDrugsForConduct(conn, 0, function(err, result){
+			expect(err).not;
+			expect(result).eql([]);
+			done();
+		})
+	});
+
+	it("simple", function(done){
+		var conductId = 321;
+		var n = 3;
+		var drugs = util.iterMap(n, function(i){
+			return m.conductDrug({
+				visit_conduct_id: conductId
+			});
+		});
+		conti.exec([
+			function(done){
+				m.batchSave(conn, drugs, done);
+			},
+			function(done){
+				db.listConductDrugsForConduct(conn, conductId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = drugs.map(function(drug){
+						return drug.data;
+					});
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+	})
+});

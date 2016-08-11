@@ -187,3 +187,63 @@ describe("Testing count conduct shinryou", function(){
 		], done);
 	})
 });
+
+describe("Testing listShinryouConductForConduct", function(){
+	before(clearTable);
+	after(clearTable);
+
+	var conn;
+
+	beforeEach(function(done){
+		setup.connect(function(err, conn_){
+			if( err ){
+				done(err);
+				return;
+			}
+			conn = conn_;
+			done();
+		})
+	});
+
+	afterEach(function(done){
+		setup.release(conn, done);
+	});
+
+	it("empty", function(done){
+		db.listConductShinryouForConduct(conn, 0, function(err, result){
+			expect(err).not;
+			expect(result).eql([]);
+			done();
+		});
+	});
+
+	it("simple", function(done){
+		var conductId = 120;
+		var n = 3;
+		var shinryouList = util.iterMap(n, function(i){
+			var props = {
+				visit_conduct_id: conductId
+			};
+			return m.conductShinryou(props);
+		});
+		conti.exec([
+			function(done){
+				m.batchSave(conn, shinryouList, done);
+			},
+			function(done){
+				db.listConductShinryouForConduct(conn, conductId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = shinryouList.map(function(shinryou){
+						return shinryou.data;
+					});
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+
+	})
+});

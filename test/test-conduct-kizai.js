@@ -210,3 +210,59 @@ describe("Testing count conduct kizai", function(){
 		], done);
 	})
 });
+
+describe("Testing listConductKizaiForConduct", function(){
+	var conn;
+
+	beforeEach(clearTable);
+	beforeEach(function(done){
+		setup.connect(function(err, conn_){
+			if( err ){
+				done(err);
+				return;
+			}
+			conn = conn_;
+			done();
+		})
+	});
+
+	afterEach(function(done){
+		setup.release(conn, done);
+	});
+	afterEach(clearTable);
+
+	it("empty", function(done){
+		db.listConductKizaiForConduct(conn, 0, function(err, result){
+			expect(err).not;
+			expect(result).eql([]);
+			done();
+		})
+	});
+
+	it("simple", function(done){
+		var conductId = 7563;
+		var n = 3;
+		var kizaiList = util.iterMap(n, function(i){
+			return m.conductKizai({
+				visit_conduct_id: conductId
+			});
+		});
+		conti.exec([
+			function(done){
+				m.batchSave(conn, kizaiList, done);
+			},
+			function(done){
+				db.listConductKizaiForConduct(conn, conductId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					var ans = kizaiList.map(function(kizai){ return kizai.data; });
+					expect(result).eql(ans);
+					done();
+				})
+			}
+		], done);
+
+	});
+});

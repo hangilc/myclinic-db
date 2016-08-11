@@ -1,6 +1,6 @@
 {
   "name": "myclinic-db",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Database interface for myclinic",
   "main": "index.js",
   "scripts": {

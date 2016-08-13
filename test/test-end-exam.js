@@ -7,6 +7,7 @@ var DbUtil = require("./db-util");
 var util = require("./util");
 var conti = require("../lib/conti");
 var m = require("./model");
+var moment = require("moment");
 
 function initDb(done){
 	util.withConnect(function(conn, done){
@@ -99,9 +100,10 @@ describe("Testing end exam", function(){
 		var patientId = 2133;
 		var visitId;
 		var chargeValue = 140;
+		var now = moment().format("YYYY-MM-DD HH:mm:ss")
 		conti.exec([
 			function(done){
-				db.startVisit(conn, patientId, at, function(err, visitId_){
+				db.startVisit(conn, patientId, now, function(err, visitId_){
 					if( err ){
 						done(err);
 						return;
@@ -155,4 +157,173 @@ describe("Testing end exam", function(){
 		], done);
 	});
 
-})
+});
+
+describe("Testing endExam (2)", function(){
+	var conn;
+
+	beforeEach(initDb);
+
+	beforeEach(function(done){
+		setup.connect(function(err, conn_){
+			if( err ){
+				done(err);
+				return;
+			}
+			conn = conn_;
+			done();
+		})
+	});
+
+	afterEach(function(done){
+		setup.release(conn, done);
+	});
+
+	afterEach(initDb);
+
+	it("not today", function(done){
+		var patientId = 2133;
+		var visit = util.mockVisit({
+			v_datetime: "2016-03-12 11:32:00"
+			//v_datetime: moment().format("YYYY-MM-DD 10:23:46")
+		});
+		var drug1 = util.mockDrug({
+			d_prescribed: 0
+		});
+		conti.exec([
+			function(done){
+				db.insertVisit(conn, visit, done);
+			},
+			function(done){
+				drug1.visit_id = visit.visit_id;
+				db.insertDrug(conn, drug1, done);
+			},
+			function(done){
+				db.endExam(conn, visit.visit_id, 320, done);
+			},
+			function(done){
+				db.getWqueue(conn, visit.visit_id, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result.wait_state).equal(util.WqueueStateWaitCashier);
+					done();
+				})
+			},
+			function(done){
+				db.findPharmaQueue(conn, visit.visit_id, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).null;
+					done();
+				})
+			}
+		], function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			done();
+		})
+	})
+
+	it("today (not prescribed)", function(done){
+		var patientId = 2133;
+		var visit = util.mockVisit({
+			v_datetime: moment().format("YYYY-MM-DD HH:mm:ss")
+		});
+		var drug1 = util.mockDrug({
+			d_prescribed: 0
+		});
+		conti.exec([
+			function(done){
+				db.insertVisit(conn, visit, done);
+			},
+			function(done){
+				drug1.visit_id = visit.visit_id;
+				db.insertDrug(conn, drug1, done);
+			},
+			function(done){
+				db.endExam(conn, visit.visit_id, 320, done);
+			},
+			function(done){
+				db.getWqueue(conn, visit.visit_id, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result.wait_state).equal(util.WqueueStateWaitCashier);
+					done();
+				})
+			},
+			function(done){
+				db.findPharmaQueue(conn, visit.visit_id, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).not.null;
+					done();
+				})
+			}
+		], function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			done();
+		})
+	})	
+
+	it("today (prescribed)", function(done){
+		var patientId = 2133;
+		var visit = util.mockVisit({
+			v_datetime: moment().format("YYYY-MM-DD HH:mm:ss")
+		});
+		var drug1 = util.mockDrug({
+			d_prescribed: 1
+		});
+		conti.exec([
+			function(done){
+				db.insertVisit(conn, visit, done);
+			},
+			function(done){
+				drug1.visit_id = visit.visit_id;
+				db.insertDrug(conn, drug1, done);
+			},
+			function(done){
+				db.endExam(conn, visit.visit_id, 320, done);
+			},
+			function(done){
+				db.getWqueue(conn, visit.visit_id, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result.wait_state).equal(util.WqueueStateWaitCashier);
+					done();
+				})
+			},
+			function(done){
+				db.findPharmaQueue(conn, visit.visit_id, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).null;
+					done();
+				})
+			}
+		], function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			done();
+		})
+	})	
+
+});

@@ -307,3 +307,60 @@ describe("Testing listAllFullDiseases", function(){
 	})
 
 });
+
+describe("Testing getFullDisease", function(){
+	var conn = setup.getConnection();
+
+	beforeEach(initDb);
+	afterEach(initDb);
+
+	it("simple", function(done){
+		var shoubyoumeiMaster = util.mockShoubyoumeiMaster();
+		var shuushokugoMaster = util.mockShuushokugoMaster();
+		var disease = {
+			shoubyoumeicode: shoubyoumeiMaster.shoubyoumeicode,
+			patient_id: 200,
+			start_date: "2016-08-14",
+			end_date: "0000-00-00",
+			end_reason: "N"
+		};
+		var diseaseAdj = {
+			shuushokugocode: shuushokugoMaster.shuushokugocode
+		};
+		var fullDisease;
+		conti.exec([
+			function(done){
+				db.insertShoubyoumeiMaster(conn, shoubyoumeiMaster, done);
+			},
+			function(done){
+				db.insertShuushokugoMaster(conn, shuushokugoMaster, done);
+			},
+			function(done){
+				db.insertDisease(conn, disease, done);
+			},
+			function(done){
+				diseaseAdj.disease_id = disease.disease_id;
+				db.insertDiseaseAdj(conn, diseaseAdj, done);
+			},
+			function(done){
+				db.getFullDisease(conn, disease.disease_id, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					fullDisease = result;
+					done();
+				})
+			}
+		], function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			var ans = util.assign({}, disease, shoubyoumeiMaster);
+			ans.adj_list = [util.assign({}, diseaseAdj, shuushokugoMaster)];
+			expect(fullDisease).eql(ans);
+			done();
+		});	
+	})
+});

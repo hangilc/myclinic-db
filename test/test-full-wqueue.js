@@ -1,7 +1,7 @@
 var expect = require("chai").expect;
 var db = require("../index");
 var setup = require("./setup");
-var conti = require("./conti");
+var conti = require("conti");
 var util = require("./util");
 
 var wqueueStateWaitExam = util.WqueueStateWaitExam;
@@ -13,25 +13,31 @@ var wqueueStateWaitAppoint = util.WqueueStateWaitCashier;
 
 function insertPatients(conn, patients, cb){
 	conti.exec([
-		conti.forEach(patients, function(patient, cb){
-			db.insertPatient(conn, patient, cb);
-		})
+		function(done){
+			conti.forEach(patients, function(patient, done){
+				db.insertPatient(conn, patient, done);
+			}, done);
+		}
 	], cb);
 }
 
 function insertVisits(conn, visits, cb){
 	conti.exec([
-		conti.forEach(visits, function(visit, cb){
-			db.insertVisit(conn, visit, cb);
-		})
+		function(done){
+			conti.forEach(visits, function(visit, cb){
+				db.insertVisit(conn, visit, cb);
+			}, done)
+		}
 	], cb);
 }
 
 function insertWqueueList(conn, wqueueList, cb){
 	conti.exec([
-		conti.forEach(wqueueList, function(wqueue, cb){
-			db.insertWqueue(conn, wqueue, cb);
-		})
+		function(done){
+			conti.forEach(wqueueList, function(wqueue, cb){
+				db.insertWqueue(conn, wqueue, cb);
+			}, done)
+		}
 	], cb);
 }
 

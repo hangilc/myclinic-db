@@ -5,7 +5,7 @@ var db = require("../index");
 var expect = require("chai").expect;
 var DbUtil = require("./db-util");
 var util = require("./util");
-var conti = require("../lib/conti");
+var conti = require("conti");
 var m = require("./model");
 
 var initDb = util.createClearTableFun(["hoken_koukikourei"]);

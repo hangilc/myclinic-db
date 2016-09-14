@@ -2,7 +2,7 @@
 
 var util = require("./util");
 var setup = require("./setup");
-var conti = require("../lib/conti");
+var conti = require("conti");
 var db = require("../index");
 var expect = require("chai").expect;
 
@@ -27,9 +27,14 @@ function mockIyakuhinMasters(n, props){
 }
 
 function taskBatchInsertIyakuhinMasters(conn, masters){
-	return conti.taskForEach(masters, function(master, done){
-		db.insertIyakuhinMaster(conn, master, done);
-	});
+	return function(done){
+		conti.forEach(masters, function(master, done){
+			db.insertIyakuhinMaster(conn, master, done);
+		}, done);
+	}
+	// return conti.taskForEach(masters, function(master, done){
+	// 	db.insertIyakuhinMaster(conn, master, done);
+	// });
 }
 
 function mockDrugs(visit, masters){
@@ -53,9 +58,17 @@ function mockDrugs(visit, masters){
 }
 
 function taskBatchInsertDrugs(conn, drugs){
-	return conti.taskForEach(drugs, function(drug, done){
-		db.insertDrug(conn, drug, done);
-	});
+	return function(done){
+		if( typeof drugs === "function" ){
+			drugs = drugs();
+		}
+		conti.forEach(drugs, function(drug, done){
+			db.insertDrug(conn, drug, done);
+		}, done);
+	}
+	// return conti.taskForEach(drugs, function(drug, done){
+	// 	db.insertDrug(conn, drug, done);
+	// });
 }
 
 function initDb(done){

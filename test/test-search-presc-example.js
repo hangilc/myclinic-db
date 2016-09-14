@@ -5,7 +5,7 @@ var db = require("../index");
 var expect = require("chai").expect;
 var DbUtil = require("./db-util");
 var util = require("./util");
-var conti = require("../lib/conti");
+var conti = require("conti");
 var model = require("./model");
 
 var initDb = util.createClearTableFun(["presc_example", "iyakuhin_master_arch"]);

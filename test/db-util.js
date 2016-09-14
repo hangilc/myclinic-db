@@ -1,6 +1,6 @@
 "use strict";
 
-var conti = require("../lib/conti");
+var conti = require("conti");
 var db = require("../index");
 
 function DbUtil(conn){
@@ -30,9 +30,14 @@ DbUtil.prototype.in_sm = function(masters, done){
 
 DbUtil.prototype.t_in_im = function(masters){
 	var conn = this.conn;
-	return conti.taskForEach(masters, function(master, done){
-		db.insertIyakuhinMaster(conn, master, done);
-	});
+	return function(done){
+		conti.forEach(masters, function(master, done){
+			db.insertIyakuhinMaster(conn, master, done);
+		}, done);
+	}
+	// return conti.taskForEach(masters, function(master, done){
+	// 	db.insertIyakuhinMaster(conn, master, done);
+	// });
 };
 
 DbUtil.prototype.in_c = function(conducts, done){
@@ -44,9 +49,14 @@ DbUtil.prototype.in_c = function(conducts, done){
 
 DbUtil.prototype.t_in_c = function(conducts){
 	var conn = this.conn;
-	return conti.taskForEach(conducts, function(conduct, done){
-		db.insertConduct(conn, conduct, done);
-	})
+	return function(done){
+		conti.forEach(conducts, function(conduct, done){
+			db.insertConduct(conn, conduct, done);
+		}, done);
+	}
+	// return conti.taskForEach(conducts, function(conduct, done){
+	// 	db.insertConduct(conn, conduct, done);
+	// })
 };
 
 DbUtil.prototype.in_cd = function(drugs, done){

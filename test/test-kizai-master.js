@@ -4,7 +4,7 @@ var util = require("./util");
 var db = require("../index");
 var moment = require("moment");
 var model = require("./model");
-var conti = require("../lib/conti");
+var conti = require("conti");
 
 var clearTable = util.createClearTableFun("tokuteikizai_master_arch");
 

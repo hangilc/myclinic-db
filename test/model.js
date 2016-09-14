@@ -2,7 +2,7 @@
 
 var util = require("./util");
 var db = require("../index");
-var conti = require("../lib/conti");
+var conti = require("conti");
 
 // IyakuhinMaster ////////////////////////////////////////////////////
 

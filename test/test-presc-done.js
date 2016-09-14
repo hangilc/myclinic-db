@@ -4,7 +4,7 @@ var setup = require("./setup");
 var db = require("../index");
 var expect = require("chai").expect;
 var util = require("./util");
-var conti = require("../lib/conti");
+var conti = require("conti");
 
 describe("Testing prescDone", function(){
 	var conn;

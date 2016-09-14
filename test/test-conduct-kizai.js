@@ -3,7 +3,7 @@ var expect = require("chai").expect;
 var util = require("./util");
 var db = require("../index");
 var m = require("./model");
-var conti = require("../lib/conti");
+var conti = require("conti");
 
 var clearTable = util.createClearTableFun("visit_conduct_kizai");
 

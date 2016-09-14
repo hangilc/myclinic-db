@@ -5,7 +5,7 @@ var setup = require("./setup");
 var db = require("../index");
 var expect = require("chai").expect;
 var DbUtil = require("./db-util");
-var conti = require("../lib/conti");
+var conti = require("conti");
 
 function initDb(done){
 	util.withConnect(function(conn, done){

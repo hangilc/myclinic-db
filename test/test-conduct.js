@@ -2,7 +2,7 @@ var setup = require("./setup");
 var expect = require("chai").expect;
 var util = require("./util");
 var db = require("../index");
-var conti = require("../lib/conti");
+var conti = require("conti");
 var m = require("./model");
 
 var clearTable = util.createClearTableFun("visit_conduct");

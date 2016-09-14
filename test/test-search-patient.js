@@ -3,7 +3,7 @@
 var expect = require("chai").expect;
 var setup = require("./setup");
 var util = require("./util");
-var conti = require("./conti");
+var conti = require("conti");
 var db = require("../index");
 
 var clearTable = util.createClearTableFun("patient");
@@ -18,15 +18,21 @@ var patients = {
 
 function setupPatients(done){
 	util.withConnect(function(conn, cb){
-		conti.exec([
-			conti.forEachKey(patients, function(key, cb){
-				var p = patients[key];
-				p = util.mockPatient(p);
-				patients[key] = p;
-				db.insertPatient(conn, p, cb);
-			})
-		],
-		cb);
+		conti.forEach(Object.keys(patients), function(key, done){
+			var p = patients[key];
+			p = util.mockPatient(p);
+			patients[key] = p;
+			db.insertPatient(conn, p, done);
+		}, cb);
+		// conti.exec([
+		// 	conti.forEachKey(patients, function(key, cb){
+		// 		var p = patients[key];
+		// 		p = util.mockPatient(p);
+		// 		patients[key] = p;
+		// 		db.insertPatient(conn, p, cb);
+		// 	})
+		// ],
+		// cb);
 	},
 	done);
 }

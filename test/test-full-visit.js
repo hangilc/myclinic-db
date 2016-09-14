@@ -4,7 +4,7 @@ var expect = require("chai").expect;
 var db = require("../index");
 var util = require("./util");
 var setup = require("./setup");
-var conti = require("./conti");
+var conti = require("conti");
 var m = require("./model");
 
 function resetTables(conn, done){

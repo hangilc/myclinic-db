@@ -2,7 +2,7 @@ var util = require("./util");
 var setup = require("./setup");
 var db = require("../index");
 var expect = require("chai").expect;
-var conti = require("./conti");
+var conti = require("conti");
 var moment = require("moment");
 
 function resetTables(done){

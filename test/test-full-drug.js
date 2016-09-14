@@ -4,7 +4,7 @@ var expect = require("chai").expect;
 var db = require("../index");
 var setup = require("./setup");
 var util = require("./util");
-var conti = require("../lib/conti");
+var conti = require("conti");
 
 function initTables(done){
 	util.withConnect(function(conn, done){

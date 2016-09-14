@@ -177,3 +177,88 @@ describe("Testing listDrugsForVisit", function(){
 		})
 	})
 });
+
+describe("Testing listIyakuhincodesByPatient", function(){
+	var conn;
+
+	beforeEach(function(){
+		conn = setup.getConnection();
+	});
+
+	beforeEach(function(done){
+		util.clearTables(conn, ["visit_drug", "visit"], done);
+	});
+
+	it("empty", function(done){
+		db.listIyakuhincodesByPatient(conn, 0, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).eql([]);
+			done();
+		});
+	});
+
+	it("simple", function(done){
+		var patientId = 1000;
+		var iyakuhincode1 = 123, iyakuhincode2 = 124;
+		var visits = [{}, {}, {}];
+		conti.exec([
+			function(done){
+				conti.forEach(visits, function(visit, done){
+					util.assign(visit, util.mockVisit(visit));
+					visit.patient_id = patientId;
+					db.insertVisit(conn, visit, done);
+				}, done);
+			},
+			function(done){
+				conti.forEach([iyakuhincode1], function(iyakuhincode, done){
+					var visit_id = visits[0].visit_id;
+					var drug = util.mockDrug({
+						visit_id: visit_id,
+						d_iyakuhincode: iyakuhincode
+					});
+					db.insertDrug(conn, drug, done)
+				}, done);
+			},
+			function(done){
+				conti.forEach([iyakuhincode1, iyakuhincode2], function(iyakuhincode, done){
+					var visit_id = visits[1].visit_id;
+					var drug = util.mockDrug({
+						visit_id: visit_id,
+						d_iyakuhincode: iyakuhincode
+					});
+					db.insertDrug(conn, drug, done)
+				}, done);
+			},
+			function(done){
+				conti.forEach([iyakuhincode2, iyakuhincode1], function(iyakuhincode, done){
+					var visit_id = visits[2].visit_id;
+					var drug = util.mockDrug({
+						visit_id: visit_id,
+						d_iyakuhincode: iyakuhincode
+					});
+					db.insertDrug(conn, drug, done)
+				}, done);
+			},
+			function(done){
+				db.listIyakuhincodesByPatient(conn, patientId, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					list = result;
+					done();
+				})
+			}
+		], function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(list).eql([iyakuhincode1, iyakuhincode2]);
+			done();
+		})
+	})
+});

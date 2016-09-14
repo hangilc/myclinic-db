@@ -262,3 +262,83 @@ describe("Testing listIyakuhincodesByPatient", function(){
 		})
 	})
 });
+
+describe("Testing countVisitsByIyakuhincode", function(){
+	var conn = setup.getConnection();
+
+	beforeEach(function(done){
+		util.clearTables(conn, ["visit", "visit_drug", "iyakuhin_master_arch"], done);
+	});
+
+	it("empty", function(done){
+		db.countVisitsByIyakuhincode(conn, 0, 0, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).eql(0);
+			done();
+		})
+	});
+
+	it("simple", function(done){
+		var patientId = 1234;
+		var masters = [util.mockIyakuhinMaster(), util.mockIyakuhinMaster()];
+		var iyakuhincode1 = masters[0].iyakuhincode;
+		var iyakuhincode2 = masters[1].iyakuhincode;
+		var resultCount;
+		var visits = [
+			{
+				patient_id: patientId,
+				drugs: [
+					{
+						d_iyakuhincode: iyakuhincode1
+					}
+				]
+			},
+			{
+				patient_id: patientId,
+				drugs: [
+					{
+						d_iyakuhincode: iyakuhincode2
+					}
+				]
+			},
+			{
+				patient_id: patientId,
+				drugs: [
+					{
+						d_iyakuhincode: iyakuhincode1
+					}
+				]
+			},
+		];
+		conti.exec([
+			function(done){
+				conti.forEach(masters, function(master, done){
+					db.insertIyakuhinMaster(conn, master, done);
+				}, done);
+			},
+			function(done){
+				util.insertFullVisits(conn, visits, done);
+			},
+			function(done){
+				db.countVisitsByIyakuhincode(conn, patientId, iyakuhincode1, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					resultCount = result;
+					done();
+				})
+			}
+		], function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(resultCount).equal(2);
+			done();
+		})
+	});
+});

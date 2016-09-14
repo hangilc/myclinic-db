@@ -630,7 +630,48 @@ exports.batchInsertTexts = function(conn, texts, done){
 	conti.forEach(texts, function(text, done){
 		db.insertText(conn, text, done);
 	}, done)
-}
+};
+
+exports.addDefaults = function(src, defaults){
+	Object.keys(defaults).forEach(function(key){
+		if( !(key in src) ){
+			src[key] = defaults[key];
+		}
+	})
+};
+
+exports.insertFullVisits = function(conn, visits, done){
+	conti.forEach(visits, function(visit, done){
+		conti.exec([
+			function(done){
+				exports.addDefaults(visit, exports.mockVisit());
+				db.insertVisit(conn, visit, done);
+			},
+			function(done){
+				if( visit.drugs ){
+					conti.forEach(visit.drugs, function(drug, done){
+						exports.addDefaults(drug, exports.mockDrug());
+						drug.visit_id = visit.visit_id;
+						db.insertDrug(conn, drug, done);
+					}, done);
+				} else {
+					done();
+				}
+			},
+			function(done){
+				if( visit.shinryou_list ){
+					conti.forEach(visit.shinryou_list, function(shinryou, done){
+						exports.addDefaults(shinryou, exports.mockShinryou());
+						shinryou.visit_id = visit.visit_id;
+						db.insertShinryou(conn, shinryou, done);
+					}, done);
+				} else {
+					done();
+				}
+			}
+		], done);
+	}, done);
+};
 
 var uConst = require("myclinic-consts");
 Object.keys(uConst).forEach(function(key){

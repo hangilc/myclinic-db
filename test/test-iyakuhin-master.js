@@ -4,7 +4,7 @@ var util = require("./util");
 var db = require("../index");
 var moment = require("moment");
 var model = require("./model");
-var conti = require("./conti");
+var conti = require("conti");
 
 var clearTable = util.createClearTableFun("iyakuhin_master_arch");
 
@@ -254,3 +254,48 @@ describe("Testing search iyakuhin master", function(){
 		], done);
 	})
 });
+
+describe("Testing getNamesOfIyakuhin", function(){
+	var conn = setup.getConnection();
+
+	beforeEach(function(done){
+		util.clearTables(conn, ["iyakuhin_master_arch"], done);
+	});
+
+	it("simple", function(done){
+		var masters = [
+			{ iyakuhincode: 1234, name: "アムロジン", yomi: "ｱﾑﾛｼﾞﾝ", valid_from: "2014-04-01" },
+			{ iyakuhincode: 1823, name: "フリバス", yomi: "ﾌﾘﾊﾞｽ", valid_from: "2014-04-01" },
+			{ iyakuhincode: 1234, name: "アムロジン錠", yomi: "ｱﾑﾛｼﾞﾝ", valid_from: "2016-04-01" }
+		];
+		var names;
+		conti.exec([
+			function(done){
+				conti.forEach(masters, function(master, done){
+					master = util.assign(util.mockIyakuhinMaster(), master);
+					db.insertIyakuhinMaster(conn, master, done);
+				}, done);
+			},
+			function(done){
+				db.getNamesOfIyakuhin(conn, 1234, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					names = result;
+					done();
+				})
+			}
+		], function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(names).eql({
+				name: masters[0].name,
+				yomi: masters[0].yomi
+			})
+			done();
+		})
+	});
+})

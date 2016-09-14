@@ -15,4 +15,5 @@ extend(db, require("./lib/start-visit"));
 extend(db, require("./lib/safely-delete-conduct"));
 extend(db, require("./lib/safely-delete-visit"));
 extend(db, require("./lib/full-disease"));
+extend(db, require("./lib/presc-done"));
 module.exports = db;

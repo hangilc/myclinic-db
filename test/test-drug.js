@@ -2,6 +2,7 @@ var setup = require("./setup");
 var expect = require("chai").expect;
 var util = require("./util");
 var db = require("../index");
+var conti = require("conti");
 
 var clearTable = util.createClearTableFun("visit_drug");
 
@@ -114,6 +115,65 @@ describe("Testing drug", function(){
 					done();
 				})
 			})
+		})
+	})
+});
+
+describe("Testing listDrugsForVisit", function(){
+	var conn;
+
+	beforeEach(function(){
+		conn = setup.getConnection();
+	});
+
+	beforeEach(function(done){
+		util.clearTables(conn, ["visit", "visit_drug"], done);
+	});
+
+	it("emtpy", function(done){
+		db.listDrugsForVisit(conn, 0, function(err, result){
+			if( err ){
+				done(err);
+			}
+			expect(result).eql([]);
+			done();
+		})
+	});
+
+	it("simple", function(done){
+		var visit = util.mockVisit();
+		var drugs = [];
+		for(var i=1;i<=3;i++){
+			drugs.push(util.mockDrug());
+		}
+		var list;
+		conti.exec([
+			function(done){
+				db.insertVisit(conn, visit, done);
+			},
+			function(done){
+				conti.forEach(drugs, function(drug, done){
+					drug.visit_id = visit.visit_id;
+					db.insertDrug(conn, drug, done);
+				}, done);
+			},
+			function(done){
+				db.listDrugsForVisit(conn, visit.visit_id, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					list = result;
+					done();
+				})
+			}
+		], function(err){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(list).eql(drugs);
+			done();
 		})
 	})
 });

@@ -20,6 +20,14 @@ function incYear(sqldate, n){
 	return moment(sqldate).add(1, "years").format("YYYY-MM-DD");
 }
 
+exports.momentToSqlDate = function(m){
+	return m.format("YYYY-MM-DD");
+}
+
+exports.todayAsSqlDate = function(){
+	return moment().format("YYYY-MM-DD");
+}
+
 exports.sqlDatePart = function(sqldatetime){
 	return sqldatetime.slice(0, 10);
 }

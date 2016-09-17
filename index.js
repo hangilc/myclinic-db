@@ -17,4 +17,5 @@ extend(db, require("./lib/safely-delete-visit"));
 extend(db, require("./lib/full-disease"));
 extend(db, require("./lib/presc-done"));
 extend(db, require("./lib/list-iyakuhin-by-patient"));
+extend(db, require("./lib/list-full-visits-by-iyakuhincode"));
 module.exports = db;

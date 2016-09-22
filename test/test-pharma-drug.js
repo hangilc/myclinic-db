@@ -54,4 +54,37 @@ describe("Testing pharma drug", function(){
 		})
 	})
 
+	it("find", function(done){
+		var drugs = util.iterMap(10, function(i){
+			return m.pharmaDrug();
+		});
+		conti.exec([
+			function(done){
+				m.batchSave(conn, drugs, done);
+			},
+			function(done){
+				var i = 2;
+				db.findPharmaDrug(conn, drugs[i].data.iyakuhincode, function(err, result){
+					if( err ){
+						done(err);
+						return;
+					}
+					expect(result).eql(drugs[i].data);
+					done();
+				})
+			}
+		], done);
+	});
+
+	it("get (fail)", function(done){
+		db.findPharmaDrug(conn, 0, function(err, result){
+			if( err ){
+				done(err);
+				return;
+			}
+			expect(result).null;
+			done();
+		})
+	})
+
 })

@@ -1,6 +1,6 @@
 {
   "name": "myclinic-db",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "description": "Database interface for myclinic",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "kanjidate": "^1.1.0",
-    "mocha": "^2.5.3"
+    "mocha": "^2.5.3",
+    "myclinic-config": "^1.0.0"
   }
 }

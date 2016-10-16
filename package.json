@@ -1,6 +1,6 @@
 {
   "name": "myclinic-db",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "description": "Database interface for myclinic",
   "main": "index.js",
   "scripts": {
@@ -17,13 +17,13 @@
   "dependencies": {
     "myclinic-consts": "^1.0.0",
     "conti": "^1.3.1",
-    "mysql": "^2.11.1",
-    "moment": "^2.13.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "kanjidate": "^1.1.0",
     "mocha": "^2.5.3",
-    "myclinic-config": "^1.0.0"
+    "myclinic-config": "^1.0.0",
+    "mysql": "^2.11.1",
+    "moment": "^2.13.0"
   }
 }

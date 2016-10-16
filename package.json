@@ -1,6 +1,6 @@
 {
   "name": "myclinic-db",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "Database interface for myclinic",
   "main": "index.js",
   "scripts": {
@@ -16,16 +16,13 @@
   "license": "MIT",
   "dependencies": {
     "myclinic-consts": "^1.0.0",
-    "mysql": "^2.11.1"
+    "conti": "^1.3.1",
+    "mysql": "^2.11.1",
+    "moment": "^2.13.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "conti": "^1.3.1",
-    "gulp": "^3.9.1",
-    "gulp-rename": "^1.2.2",
-    "inquirer": "^1.1.0",
     "kanjidate": "^1.1.0",
-    "mocha": "^2.5.3",
-    "moment": "^2.13.0"
+    "mocha": "^2.5.3"
   }
 }

@@ -22,8 +22,8 @@
     "chai": "^3.5.0",
     "kanjidate": "^1.1.0",
     "mocha": "^2.5.3",
-    "myclinic-config": "^1.0.0",
-    "mysql": "^2.11.1",
-    "moment": "^2.13.0"
+    "moment": "^2.13.0",
+    "myclinic-config": "^2.3.4",
+    "mysql": "^2.11.1"
   }
 }
